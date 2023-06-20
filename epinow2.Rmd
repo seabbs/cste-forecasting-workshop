@@ -313,6 +313,8 @@ rt_estimates <- estimate_infections(
   rt = rt_opts(
     prior = list(mean = 1, sd = 0.1), rw = 7
   ),
+  # Here we have turned off the default Gaussian process prior in facvour of 
+  # the random walk specified in rt_opts
   gp = NULL,
   stan = stan_opts(
     control = list(adapt_delta = 0.99),
