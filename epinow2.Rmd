@@ -222,9 +222,12 @@ est$dist
 
 ## Generation time estimate
 
+The generation time is the time between infection of an individual and infection of their infector. Rather than estimating this here instead we use an estimate from the literature.
+
 ```{r}
 generation_time <- get_generation_time(
-  disease = "SARS-CoV-2", source = "ganyani"
+  disease = "SARS-CoV-2", source = "ganyani",
+  max = 10
 )
 generation_time
 ```
@@ -242,7 +245,8 @@ Convolve the incubation period distribution with the distribution of delays from
 ```{r}
 ## Incubation period
 incubation_period <- get_incubation_period(
-  disease = "SARS-CoV-2", source = "lauer", fixed = TRUE
+  disease = "SARS-CoV-2", source = "lauer", fixed = TRUE,
+  max = 15
 )
 incubation_period
 ```
@@ -256,8 +260,9 @@ plot(incubation_period)
 ```{r}
 ## Delay from symptom onset to report
 reporting_delay <- dist_spec(
-  mean = convert_to_logmean(2, 1), mean_sd = 0,
-  sd = convert_to_logsd(2, 1), sd_sd = 0, max = 10
+  mean = convert_to_logmean(3, 1),
+  sd = convert_to_logsd(3, 1),
+  max = 10
 )
 reporting_delay
 ```
@@ -276,15 +281,24 @@ inf_to_hospitalisation <- incubation_period + reporting_delay
 plot(inf_to_hospitalisation)
 ```
 
-## Putting it all together for a nowcast
+## Putting it all together into a nowcast
 
 First we construct the data set of of hospitalisations using data as available on the 14th of January 2022.
 
 ```{r}
 oh_hosp_14th <- oh_covid_hospitalizations_by_vintage |>
-  filter(report_date == as.Date("2022-01-14"))
+  filter(report_date == as.Date("2022-01-14")) |>
+  select(date, confirm)
 
 glimpse(oh_hosp_14th)
+```
+
+In order to evaluate our model we will use the most recently reported data up to the 21st of January 2022 (as we are forecasting for a week).
+
+```{r}
+oh_hosp_21th_retro <- oh_covid_hospitalizations |>
+  filter(date <= as.Date("2022-01-21")) |>
+  select(date, confirm)
 ```
 
 We then use the `estimate_infections` function contained in `EpiNow2` on this data set to obtain a nowcast, forecast and reproduction number estimate.
@@ -297,15 +311,46 @@ rt_estimates <- estimate_infections(
   generation_time = generation_time_opts(generation_time),
   delays = delay_opts(inf_to_hospitalisation),
   rt = rt_opts(
-    prior = list(mean = 1, sd = 0.2), pop = 11.78e6
+    prior = list(mean = 1, sd = 0.1),
+    pop = 11.7e6,
+    rw = 7
   ),
-  gp = gp_opts(),
-  stan = stan_opts(control = list(adapt_delta = 0.95)),
+  gp = NULL,
+  stan = stan_opts(
+    control = list(adapt_delta = 0.99),
+    samples = 2000, warmup = 500
+  ),
   obs = obs_opts(
-    scale = list(mean = 0.1, sd = 0.05),
+    scale = list(mean = 0.01, sd = 0.025),
     family = "negbin",
     week_effect = TRUE
   ),
-  horizon = 7
+  horizon = 14
 )
 ```
+
+
+## Visualising the results
+
+
+### Effective reproduction number estimates
+
+```{r plot_rt}
+plot(rt_estimates, type = "R")
+```
+
+### Predicted hospitalisations
+
+```{r plot_hospitalisations}
+rt_estimates |>
+  pluck("summarised") |>
+  filter(variable %in% "reported_cases") |>
+  plot_estimates(
+    reported = oh_hosp_21th_retro
+  )
+plot_estimates(
+  summary(rt_estimates, type = "reported")
+)
+```
+
+## References
