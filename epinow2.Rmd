@@ -36,12 +36,12 @@ For more `EpiNow2`  see the [the package documentation](https://epiforecasts.io/
 
 ## Load required libraries
 
-We first load the packages required for this tutorial. These can be installed using 
+We first load the packages required for this tutorial. These can be installed using
 ```{r, eval = FALSE}
 renv::restore()
 ```
 
-Ideally we recommend doing this sometime before you want to work through the rest of the tutorial as it may take some time.
+`renv::restore()` is a command that will automatically load or install the correct versions of all packages needed to run this analysis. Ideally we recommend doing this sometime before you want to work through the rest of the tutorial as it may take some time.
 
 ```{r init}
 # Note this is the development version.
@@ -220,14 +220,16 @@ truncation_est <- oh_covid_hospitalizations_reporting_cdf |>
   group_split(report_date) |>
   map(~select(., -report_date)) |>
   estimate_truncation(
-    trunc_max = 10,
+    trunc_max = 7,
     chains = 4, iter = 2000,
     control = list(adapt_delta = 0.99, max_treedepth = 15),
     verbose = FALSE
   )
 
 ## Make the output a dist_spec object
-truncation_dist <- do.call(dist_spec, truncation_est$dist)
+truncation_dist <- do.call(
+  dist_spec, c(truncation_est$dist, list(fixed = TRUE))
+)
 
 truncation_dist
 ```
@@ -256,6 +258,7 @@ generation_time
 
 ```{r}
 plot(generation_time)
+
 ```
 
 ## Delays from infection to hospitalisation
@@ -333,7 +336,12 @@ rt_estimates <- estimate_infections(
   generation_time = generation_time_opts(generation_time),
   delays = delay_opts(inf_to_hospitalisation),
   rt = rt_opts(
-    prior = list(mean = 1, sd = 0.1), rw = 7
+    # Here we specify a prior for hte initial value of the reproduction number
+    # We set this to be near 1 as we expect the epidemic to be growing slowly
+    # at the start of the period of interest
+    prior = list(mean = 1, sd = 0.1),
+    # This indicates the perid of the random walk we wish to use (7 days).
+    rw = 7
   ),
   # Here we have turned off the default Gaussian process prior in facvour of 
   # the random walk specified in rt_opts
