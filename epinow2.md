@@ -293,7 +293,7 @@ truncation_dist
 
 ```
 ## 
-##   Uncertain lognormal distribution with (untruncated) logmean -1.2 (SD 0.63) and logSD 0.25 (SD 0.21)
+##   Uncertain lognormal distribution with (untruncated) logmean -1.2 (SD 0.64) and logSD 0.27 (SD 0.22)
 ```
 
 
@@ -435,13 +435,13 @@ glimpse(oh_hosp_14th)
 ## $ confirm <dbl> 576, 620, 571, 532, 562, 594, 680, 687, 667, 634, 615, 566, 60…
 ```
 
-In order to evaluate our model we will use the most recently reported data up to the 21st of January 2022 (as we are forecasting for a week).
+In order to evaluate our model we will use the most recently reported data up to the 28th of January 2022 (as we are forecasting for a week).
 
 
 ```r
-oh_hosp_21th_retro <- covid_hospitalizations |>
+oh_hosp_28th_retro <- covid_hospitalizations |>
   filter(state == "oh") |>
-  filter(date <= as.Date("2022-01-21")) |>
+  filter(date <= as.Date("2022-01-28")) |>
   select(date, confirm)
 ```
 
@@ -513,7 +513,7 @@ rt_estimates |>
   pluck("summarised") |>
   filter(variable %in% "reported_cases") |>
   plot_estimates(
-    reported = oh_hosp_21th_retro
+    reported = oh_hosp_28th_retro
   )
 ```
 
