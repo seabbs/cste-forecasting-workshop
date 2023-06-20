@@ -227,7 +227,7 @@ The generation time is the time between infection of an individual and infection
 ```{r}
 generation_time <- get_generation_time(
   disease = "SARS-CoV-2", source = "ganyani",
-  max = 10
+  max = 10, fixed = TRUE
 )
 generation_time
 ```
@@ -311,9 +311,7 @@ rt_estimates <- estimate_infections(
   generation_time = generation_time_opts(generation_time),
   delays = delay_opts(inf_to_hospitalisation),
   rt = rt_opts(
-    prior = list(mean = 1, sd = 0.1),
-    pop = 11.7e6,
-    rw = 7
+    prior = list(mean = 1, sd = 0.1), rw = 7
   ),
   gp = NULL,
   stan = stan_opts(
@@ -321,9 +319,7 @@ rt_estimates <- estimate_infections(
     samples = 2000, warmup = 500
   ),
   obs = obs_opts(
-    scale = list(mean = 0.01, sd = 0.025),
-    family = "negbin",
-    week_effect = TRUE
+    family = "negbin", week_effect = TRUE
   ),
   horizon = 14
 )
