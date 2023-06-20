@@ -1,5 +1,2 @@
-*.html
 *.Rmd
 !epinow2.Rmd
-!html
-!epinow2.hmtl
