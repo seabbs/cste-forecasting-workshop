@@ -41,7 +41,7 @@ We first load the packages required for this tutorial. These can be installed us
 renv::restore()
 ```
 
-`renv::restore()` is a command that will automatically load or install the correct versions of all packages needed to run this analysis. Ideally we recommend doing this sometime before you want to work through the rest of the tutorial as it may take some time.
+> :warning: **`renv::restore()` will take some time to run and produce output**: It is a command that will automatically load or install the correct versions of all packages needed to run this analysis. Ideally we recommend doing this sometime before you want to work through the rest of the tutorial as it may take some time.
 
 ```{r init}
 # Note this is the development version.
