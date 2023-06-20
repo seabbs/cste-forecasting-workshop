@@ -172,7 +172,7 @@ After way at looking at this is to plot the distribution of reporting delays. We
 ```{r plot-delay, fig.height = 9}
 covid_hospitalizations_reporting_cdf <-
   covid_hospitalizations_by_vintage |>
-  filter(date >= as.Date("2021-12-14")) |>
+  filter(date >= as.Date("2021-12-01")) |>
   group_by(date, state) |>
   group_modify(
     ~ mutate(.x,
@@ -200,20 +200,23 @@ covid_hospitalizations_reporting_cdf |>
     x = "Reporting delay (days)",
     y = "Hospitalisations reported relative to the final count",
     title = "Reporting delay in select states for the winter 2021-2022 wave"
-  ) + 
+  ) +
   facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
 
+For the rest of this tutorial we focus on Ohio. You can repeat the analysis for other states by changing the `state` variable in the code.
+
 ## Estimating the reporting delay
 
-We use `EpiNow2` to estimate the distribution of reporting delays. This will then allow us to correct for right truncation in the data when we estimate the reproduction number. Unfortunately, the current model cannot account for over reporting and so we will first have to remove this from the data.
+We use `EpiNow2` to estimate the distribution of reporting delays for Ohio. This will then allow us to correct for right truncation in the data when we estimate the reproduction number. Unfortunately, the current model cannot account for over reporting and so we will first have to remove this from the data.
 
 ```{r estimate_delays}
 options(mc.cores = 4)
-truncation_est <- oh_covid_hospitalizations_reporting_cdf |>
-  filter(date >= as.Date("2021-12-14")) |>
-  filter(report_date >= as.Date("2022-01-01")) |>
-  filter(report_date <= as.Date("2022-01-14")) |>
+truncation_est <- covid_hospitalizations_reporting_cdf |>
+  filter(state == "oh") |>
+  filter(date >= as.Date("2021-12-01")) |>
+  filter(report_date >= as.Date("2021-12-21")) |>
+  filter(report_date <= as.Date("2022-01-01")) |>
   group_by(date) |>
   mutate(confirm = max(confirm, dplyr::lag(confirm, default = 0))) |>
   ungroup() |>
@@ -237,19 +240,13 @@ truncation_dist <- do.call(
 truncation_dist
 ```
 
-We can now visualise the estimated reporting delay.
-
-```{r plot-delay-est}
-plot(truncation_dist)
-```
-
 ## Generation time estimate
 
 The generation time is the time between infection of an individual and infection of their infector. In order to estimate the effective reproduction number with the renewal equation we need an estimae of  the generation time so that we can relate the number of infections on day $t$ to the number of infections on day $t - \tau$ where $\tau$ is the index of the generation time distribution. Mathematically this is
 
-$$ I_t = R_t sum_{tau = 1}^T I_{t - \tau} G(\tau), $$
+$$ I_t = R_t \sum_{tau = 1}^T I_{t - \tau} G(\tau), $$
 
-where $T$ is the maximum lenght of the generation time. Rather than estimating this here instead we use an estimate from the literature.
+where $T$ is the maximum lenght of the generation time. Rather than estimating this here instead we use an estimate from the literature. Specifically we use an estimate from Ganyani et al. (2020) which is based on 468 cases of COVID-19 in China. For a real-world analysis we recommend thinking carefully about which generation time distribution to use. For example, the Ganyani et al. (2020) estimate is based on a sample of cases from China and so may not be representative of the generation time in other settings.
 
 ```{r}
 generation_time <- get_generation_time(
@@ -259,16 +256,19 @@ generation_time <- get_generation_time(
 generation_time
 ```
 
+We can now visualise this distribution.
+
 ```{r}
 plot(generation_time)
-
 ```
 
 ## Delays from infection to hospitalisation
 
-Convolve the incubation period distribution with the distribution of delays from symptom onset to hospital admission to find the distribution of total delays. 
+The delay between infection and hospitalisation can be decomposed into two distributions: the incubation period and the delay from symptom onset to hospitalisation. We can estimate these distributions using `EpiNow2` but for this tutorial we will use estimates from the literature.
 
 ### Incubation period
+
+The incubation period is the time between infection and symptom onset. Here we use an estimate from Lauer et al. (2020) which is based on 181 cases of COVID-19 in China. For a real-world analysis we recommend thinking carefully about which incubation period distribution just as we did for the generation time.
 
 ```{r}
 ## Incubation period
@@ -279,11 +279,15 @@ incubation_period <- get_incubation_period(
 incubation_period
 ```
 
+We can now visualise this distribution.
+
 ```{r}
 plot(incubation_period)
 ```
 
 ### Delay from symptom onset to hospitalisation
+
+The delay from symptom onset to hospitalisation is the time between symptom onset and hospital admission. This typically depends on the severity of sypmtoms, the robustness of the health system and the behaviour of the individual. Here we use a toy estimate but ideally data would be available to estimate this quantity.
 
 ```{r}
 ## Delay from symptom onset to report
@@ -295,15 +299,21 @@ reporting_delay <- dist_spec(
 reporting_delay
 ```
 
+We can again visualise this distribution.
+
 ```{r}
 plot(reporting_delay)
 ```
 
 ### Convolving the delay from infection to hospitalisation
 
+As the incubation period and reporting delay can be represented as probability mass functiosn (i.e., vectors of probabilities) we can convolve them to find the distribution of delays from infection to hospitalisation. This helps reduce the computational burden of the model as we do not need to model multiple delays.
+
 ```{r}
 inf_to_hospitalisation <- incubation_period + reporting_delay
 ```
+
+We can now plot this convolved distribution.
 
 ```{r}
 plot(inf_to_hospitalisation)
@@ -311,10 +321,11 @@ plot(inf_to_hospitalisation)
 
 ## Putting it all together into a nowcast
 
-First we construct the data set of of hospitalisations using data as available on the 14th of January 2022.
+Now we have all the components we need to construct a nowcast. First we construct the data set of hospitalisations we wish to nowcast using data as available on the 14th of January 2022.
 
 ```{r}
-oh_hosp_14th <- oh_covid_hospitalizations_by_vintage |>
+oh_hosp_14th <- covid_hospitalizations_by_vintage |>
+  filter(state == "oh") |>
   filter(report_date == as.Date("2022-01-14")) |>
   select(date, confirm)
 
@@ -324,12 +335,13 @@ glimpse(oh_hosp_14th)
 In order to evaluate our model we will use the most recently reported data up to the 21st of January 2022 (as we are forecasting for a week).
 
 ```{r}
-oh_hosp_21th_retro <- oh_covid_hospitalizations |>
+oh_hosp_21th_retro <- covid_hospitalizations |>
+  filter(state == "oh") |>
   filter(date <= as.Date("2022-01-21")) |>
   select(date, confirm)
 ```
 
-We then use the `estimate_infections` function contained in `EpiNow2` on this data set to obtain a nowcast, forecast and reproduction number estimate.
+We then use the `estimate_infections()` function contained in `EpiNow2` on this data set to obtain a nowcast, forecast and reproduction number estimate. Note we haven't adjusted for truncation as there was little evidence of truncation in the weeks directly before this date.
 
 ```{r estimate_infections}
 options(mc.cores = 4)
