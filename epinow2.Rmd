@@ -351,15 +351,13 @@ rt_estimates <- estimate_infections(
     samples = 2000, warmup = 500
   ),
   obs = obs_opts(
-    family = "negbin", week_effect = TRUE
+    family = "poisson", week_effect = TRUE
   ),
   horizon = 14
 )
 ```
 
-
 ## Visualising the results
-
 
 ### Effective reproduction number estimates
 
@@ -380,7 +378,8 @@ rt_estimates |>
 
 ## Summary
 
+### Strengths
+
 ### Limitations
 
-### 
 ## References
