@@ -39,7 +39,6 @@ renv::restore()
 
 Ideally we recommend doing this sometime before you want to work through the rest of the tutorial as it may take some time.
 
-
 ```r
 # Note this is the development version.
 # Docs here: https://epiforecasts.io/EpiNow2/dev/
