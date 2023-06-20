@@ -31,13 +31,14 @@ For more `EpiNow2`  see the [the package documentation](https://epiforecasts.io/
 
 ## Load required libraries
 
-We first load the packages required for this tutorial. These can be installed using 
+We first load the packages required for this tutorial. These can be installed using
 
 ```r
 renv::restore()
 ```
 
-Ideally we recommend doing this sometime before you want to work through the rest of the tutorial as it may take some time.
+`renv::restore()` is a command that will automatically load or install the correct versions of all packages needed to run this analysis. Ideally we recommend doing this sometime before you want to work through the rest of the tutorial as it may take some time.
+
 
 ```r
 # Note this is the development version.
@@ -54,17 +55,17 @@ library(here) # for file paths
 ## Load the data
 
 Use the [covicast](https://cmu-delphi.github.io/covidcast/covidcastR/) package to read in data on confirmed covid-19 hospital admissions. The primary source for these data is the HHS state-level COVID-19 hospitalization time series, which can be found on [HealthData.gov](https://healthdata.gov/Hospital/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/g62h-syeh). The [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package provides a convenient way to read in a subset of the full data set.
-Here, we focus on the data from Ohio during the Omicron wave in winter 2021-2022. We could download the most recent version of this data directly using,
+Here, we focus on the data from New York, Utah, Ohio, Virginia, and North Carolina during the Omicron wave in winter 2021-2022. We could download the most recent version of this data directly using,
 
 
 ```r
-oh_covid_hospitalizations <- covidcast_signal(
+covid_hospitalizations <- covidcast_signal(
       data_source = "hhs",
       signal = "confirmed_admissions_covid_1d",
       start_day = "2021-12-01",
       end_day = "2022-02-01",
       geo_type = "state",
-      geo_value = "oh"
+      geo_value = c("ny", "ut", "oh", "va", "nc")
     ) |>
       as_tibble() |>
       filter(issue == max(issue)) |>
@@ -78,7 +79,7 @@ Rather than just downloading the data as it is available now we can also downloa
 ```r
 dates <- seq(as.Date("2021-12-03"), as.Date("2022-03-01"), by = "day")
 # Read in the data for each date
-oh_covid_hospitalizations_by_vintage <- dates |>
+covid_hospitalizations_by_vintage <- dates |>
   purrr::map_df(\(x) (
     covidcast_signal(
       data_source = "hhs",
@@ -87,7 +88,7 @@ oh_covid_hospitalizations_by_vintage <- dates |>
       end_day = "2022-02-01",
       as_of = x,
       geo_type = "state",
-      geo_value = "oh"
+      geo_value = c("ny", "ut", "oh", "va", "nc")
     ) |>
       mutate(report_date = x) |> # Add the date of report
       select(report_date, geo_value, time_value, value) |>
@@ -101,38 +102,38 @@ Rather than repeatedly querying the `covidcast` API we instead use the data we h
 
 
 ```r
-oh_covid_hospitalizations <- readRDS(
-  here("data", "oh_covid_hospitalizations.rds")
+covid_hospitalizations <- readRDS(
+  here("data", "covid_hospitalizations.rds")
 ) |>
   as_tibble()
 
-glimpse(oh_covid_hospitalizations)
+glimpse(covid_hospitalizations)
 ```
 
 ```
-## Rows: 63
+## Rows: 315
 ## Columns: 3
-## $ state   <chr> "oh", "oh", "oh", "oh", "oh", "oh", "oh", "oh", "oh", "oh", "o…
-## $ date    <date> 2021-12-01, 2021-12-02, 2021-12-03, 2021-12-04, 2021-12-05, 2…
-## $ confirm <dbl> 576, 620, 571, 532, 562, 594, 680, 687, 667, 634, 615, 566, 60…
+## $ state   <chr> "nc", "ny", "oh", "ut", "va", "nc", "ny", "oh", "ut", "va", "n…
+## $ date    <date> 2021-12-01, 2021-12-01, 2021-12-01, 2021-12-01, 2021-12-01, 2…
+## $ confirm <dbl> 128, 443, 576, 78, 113, 169, 490, 620, 82, 137, 157, 444, 571,…
 ```
 
 ```r
-oh_covid_hospitalizations_by_vintage <- readRDS(
-  here("data", "oh_covid_hospitalizations_by_vintage.rds")
+covid_hospitalizations_by_vintage <- readRDS(
+  here("data", "covid_hospitalizations_by_vintage.rds")
 ) |>
   as_tibble()
 
-glimpse(oh_covid_hospitalizations_by_vintage)
+glimpse(covid_hospitalizations_by_vintage)
 ```
 
 ```
-## Rows: 3,653
+## Rows: 18,265
 ## Columns: 4
-## $ report_date <date> 2021-12-03, 2021-12-04, 2021-12-04, 2021-12-05, 2021-12-0…
-## $ state       <chr> "oh", "oh", "oh", "oh", "oh", "oh", "oh", "oh", "oh", "oh"…
-## $ date        <date> 2021-12-01, 2021-12-01, 2021-12-02, 2021-12-01, 2021-12-0…
-## $ confirm     <dbl> 574, 556, 556, 576, 620, 620, 574, 618, 578, 574, 577, 621…
+## $ report_date <date> 2021-12-03, 2021-12-03, 2021-12-03, 2021-12-03, 2021-12-0…
+## $ state       <chr> "nc", "ny", "oh", "ut", "va", "nc", "ny", "oh", "ut", "va"…
+## $ date        <date> 2021-12-01, 2021-12-01, 2021-12-01, 2021-12-01, 2021-12-0…
+## $ confirm     <dbl> 140, 456, 574, 80, 107, 141, 439, 556, 79, 114, 141, 435, …
 ```
 
 # Data exploration
@@ -143,7 +144,7 @@ We start by visualising the currently reported hospitalisations for this time pe
 
 
 ```r
-oh_covid_hospitalizations |>
+covid_hospitalizations |>
   ggplot() +
   aes(x = date, y = confirm) +
   geom_col(alpha = 0.6) +
@@ -151,8 +152,9 @@ oh_covid_hospitalizations |>
   labs(
     x = "Date of hospitalisation",
     y = "Hospitalisations",
-    title = "Hospitalisations in Ohio for the winter 2021-2022 wave"
-  )
+    title = "Hospitalisations in select sates for the winter 2021-2022 wave"
+  ) +
+  facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
 
 ![](epinow2_files/figure-html/plot-obs-1.png)<!-- -->
@@ -163,12 +165,12 @@ We now need to overlay what was actually observed at the time. We can do this by
 
 
 ```r
-oh_covid_hospitalizations |>
+covid_hospitalizations |>
   ggplot() +
   aes(x = date, y = confirm) +
   geom_point(alpha = 0.6) +
   geom_line(
-    data = oh_covid_hospitalizations_by_vintage,
+    data = covid_hospitalizations_by_vintage,
     aes(x = date, y = confirm, col = report_date, group = report_date),
     alpha = 0.8
   ) +
@@ -177,10 +179,11 @@ oh_covid_hospitalizations |>
   labs(
     x = "Date of hospitalisation",
     y = "Hospitalisations",
-    title = "Hospitalisations in Ohio for the winter 2021-2022 wave"
+    title = "Hospitalisations in select states for the winter 2021-2022 wave"
   ) +
   guides(col = guide_colorbar(title = "Date of report", barwidth = 15)) +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") +
+  facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
 
 ![](epinow2_files/figure-html/plot-obs-vintage-1.png)<!-- -->
@@ -193,10 +196,10 @@ After way at looking at this is to plot the distribution of reporting delays. We
 
 
 ```r
-oh_covid_hospitalizations_reporting_cdf <-
-  oh_covid_hospitalizations_by_vintage |>
-  filter(date >= as.Date("2021-12-14")) |>
-  group_by(date) |>
+covid_hospitalizations_reporting_cdf <-
+  covid_hospitalizations_by_vintage |>
+  filter(date >= as.Date("2021-12-01")) |>
+  group_by(date, state) |>
   group_modify(
     ~ mutate(.x,
       diff = confirm - lag(confirm, default = 0),
@@ -211,49 +214,53 @@ oh_covid_hospitalizations_reporting_cdf <-
     cdf = confirm / final_reported
   )
 
-glimpse(oh_covid_hospitalizations_reporting_cdf)
+glimpse(covid_hospitalizations_reporting_cdf)
 ```
 
 ```
-## Rows: 2,574
+## Rows: 18,265
 ## Columns: 8
-## $ date           <date> 2021-12-14, 2021-12-14, 2021-12-14, 2021-12-14, 2021-1…
-## $ report_date    <date> 2021-12-16, 2021-12-17, 2021-12-18, 2021-12-19, 2021-1…
-## $ state          <chr> "oh", "oh", "oh", "oh", "oh", "oh", "oh", "oh", "oh", "…
-## $ confirm        <dbl> 567, 589, 588, 608, 608, 608, 608, 608, 608, 608, 608, …
-## $ diff           <dbl> 567, 22, -1, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
-## $ final_reported <dbl> 608, 608, 608, 608, 608, 608, 608, 608, 608, 608, 608, …
+## $ date           <date> 2021-12-01, 2021-12-01, 2021-12-01, 2021-12-01, 2021-1…
+## $ state          <chr> "nc", "nc", "nc", "nc", "nc", "nc", "nc", "nc", "nc", "…
+## $ report_date    <date> 2021-12-03, 2021-12-04, 2021-12-05, 2021-12-06, 2021-1…
+## $ confirm        <dbl> 140, 141, 142, 142, 128, 128, 128, 128, 128, 128, 128, …
+## $ diff           <dbl> 140, 1, 1, 0, -14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ final_reported <dbl> 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, …
 ## $ delay          <dbl> 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,…
-## $ cdf            <dbl> 0.9325658, 0.9687500, 0.9671053, 1.0000000, 1.0000000, …
+## $ cdf            <dbl> 1.093750, 1.101562, 1.109375, 1.109375, 1.000000, 1.000…
 ```
 
 ```r
-oh_covid_hospitalizations_reporting_cdf |>
-  filter(delay <= 14) |>
+covid_hospitalizations_reporting_cdf |>
+  filter(delay <= 10) |>
   ggplot() +
   aes(x = delay, y = cdf, group = date) +
-  geom_step(alpha = 0.6) +
+  geom_step(alpha = 0.4) +
   theme_bw() +
   labs(
     x = "Reporting delay (days)",
     y = "Hospitalisations reported relative to the final count",
-    title = "Reporting delay in Ohio for the winter 2021-2022 wave"
-  )
+    title = "Reporting delay in select states for the winter 2021-2022 wave"
+  ) +
+  facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
 
 ![](epinow2_files/figure-html/plot-delay-1.png)<!-- -->
 
+For the rest of this tutorial we focus on Ohio. You can repeat the analysis for other states by changing the `state` variable in the code.
+
 ## Estimating the reporting delay
 
-We use `EpiNow2` to estimate the distribution of reporting delays. This will then allow us to correct for right truncation in the data when we estimate the reproduction number. Unfortunately, the current model cannot account for over reporting and so we will first have to remove this from the data.
+We use `EpiNow2` to estimate the distribution of reporting delays for Ohio. This will then allow us to correct for right truncation in the data when we estimate the reproduction number. Unfortunately, the current model cannot account for over reporting and so we will first have to remove this from the data.
 
 
 ```r
 options(mc.cores = 4)
-truncation_est <- oh_covid_hospitalizations_reporting_cdf |>
-  filter(date >= as.Date("2021-12-14")) |>
-  filter(report_date >= as.Date("2022-01-01")) |>
-  filter(report_date <= as.Date("2022-01-14")) |>
+truncation_est <- covid_hospitalizations_reporting_cdf |>
+  filter(state == "oh") |>
+  filter(date >= as.Date("2021-12-01")) |>
+  filter(report_date >= as.Date("2021-12-21")) |>
+  filter(report_date <= as.Date("2022-01-01")) |>
   group_by(date) |>
   mutate(confirm = max(confirm, dplyr::lag(confirm, default = 0))) |>
   ungroup() |>
@@ -263,39 +270,32 @@ truncation_est <- oh_covid_hospitalizations_reporting_cdf |>
   group_split(report_date) |>
   map(~select(., -report_date)) |>
   estimate_truncation(
-    trunc_max = 10,
+    trunc_max = 7,
     chains = 4, iter = 2000,
     control = list(adapt_delta = 0.99, max_treedepth = 15),
     verbose = FALSE
   )
 
 ## Make the output a dist_spec object
-truncation_dist <- do.call(dist_spec, truncation_est$dist)
+truncation_dist <- do.call(
+  dist_spec, c(truncation_est$dist, list(fixed = TRUE))
+)
 
 truncation_dist
 ```
 
 ```
 ## 
-##   Uncertain lognormal distribution with (untruncated) logmean -1.2 (SD 0.63) and logSD 0.27 (SD 0.22)
+##   Fixed distribution with PMF [NaN NaN NaN NaN NaN NaN NaN]
 ```
-
-We can now visualise the estimated reporting delay.
-
-
-```r
-plot(truncation_dist)
-```
-
-![](epinow2_files/figure-html/plot-delay-est-1.png)<!-- -->
 
 ## Generation time estimate
 
 The generation time is the time between infection of an individual and infection of their infector. In order to estimate the effective reproduction number with the renewal equation we need an estimae of  the generation time so that we can relate the number of infections on day $t$ to the number of infections on day $t - \tau$ where $\tau$ is the index of the generation time distribution. Mathematically this is
 
-$$ I_t = R_t sum_{tau = 1}^T I_{t - \tau} G(\tau), $$
+$$ I_t = R_t \sum_{tau = 1}^T I_{t - \tau} G(\tau), $$
 
-where $T$ is the maximum lenght of the generation time. Rather than estimating this here instead we use an estimate from the literature.
+where $T$ is the maximum lenght of the generation time. Rather than estimating this here instead we use an estimate from the literature. Specifically we use an estimate from Ganyani et al. (2020) which is based on 468 cases of COVID-19 in China. For a real-world analysis we recommend thinking carefully about which generation time distribution to use. For example, the Ganyani et al. (2020) estimate is based on a sample of cases from China and so may not be representative of the generation time in other settings.
 
 
 ```r
@@ -311,6 +311,8 @@ generation_time
 ##   Fixed distribution with PMF [0.18 0.2 0.17 0.13 0.1 0.074 0.054 0.039 0.028 0.02]
 ```
 
+We can now visualise this distribution.
+
 
 ```r
 plot(generation_time)
@@ -320,9 +322,11 @@ plot(generation_time)
 
 ## Delays from infection to hospitalisation
 
-Convolve the incubation period distribution with the distribution of delays from symptom onset to hospital admission to find the distribution of total delays. 
+The delay between infection and hospitalisation can be decomposed into two distributions: the incubation period and the delay from symptom onset to hospitalisation. We can estimate these distributions using `EpiNow2` but for this tutorial we will use estimates from the literature.
 
 ### Incubation period
+
+The incubation period is the time between infection and symptom onset. Here we use an estimate from Lauer et al. (2020) which is based on 181 cases of COVID-19 in China. For a real-world analysis we recommend thinking carefully about which incubation period distribution just as we did for the generation time.
 
 
 ```r
@@ -339,6 +343,8 @@ incubation_period
 ##   Fixed distribution with PMF [5.3e-05 0.013 0.093 0.18 0.2 0.17 0.12 0.083 0.053 0.033 0.02 0.012 0.0074 0.0046 0.0028]
 ```
 
+We can now visualise this distribution.
+
 
 ```r
 plot(incubation_period)
@@ -347,6 +353,8 @@ plot(incubation_period)
 ![](epinow2_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 ### Delay from symptom onset to hospitalisation
+
+The delay from symptom onset to hospitalisation is the time between symptom onset and hospital admission. This typically depends on the severity of sypmtoms, the robustness of the health system and the behaviour of the individual. Here we use a toy estimate but ideally data would be available to estimate this quantity.
 
 
 ```r
@@ -364,6 +372,8 @@ reporting_delay
 ##   Fixed distribution with PMF [0.00064 0.14 0.43 0.29 0.11 0.03 0.008 0.0021 0.00053 0.00014]
 ```
 
+We can again visualise this distribution.
+
 
 ```r
 plot(reporting_delay)
@@ -373,10 +383,14 @@ plot(reporting_delay)
 
 ### Convolving the delay from infection to hospitalisation
 
+As the incubation period and reporting delay can be represented as probability mass functiosn (i.e., vectors of probabilities) we can convolve them to find the distribution of delays from infection to hospitalisation. This helps reduce the computational burden of the model as we do not need to model multiple delays.
+
 
 ```r
 inf_to_hospitalisation <- incubation_period + reporting_delay
 ```
+
+We can now plot this convolved distribution.
 
 
 ```r
@@ -387,11 +401,12 @@ plot(inf_to_hospitalisation)
 
 ## Putting it all together into a nowcast
 
-First we construct the data set of of hospitalisations using data as available on the 14th of January 2022.
+Now we have all the components we need to construct a nowcast. First we construct the data set of hospitalisations we wish to nowcast using data as available on the 14th of January 2022.
 
 
 ```r
-oh_hosp_14th <- oh_covid_hospitalizations_by_vintage |>
+oh_hosp_14th <- covid_hospitalizations_by_vintage |>
+  filter(state == "oh") |>
   filter(report_date == as.Date("2022-01-14")) |>
   select(date, confirm)
 
@@ -409,12 +424,13 @@ In order to evaluate our model we will use the most recently reported data up to
 
 
 ```r
-oh_hosp_21th_retro <- oh_covid_hospitalizations |>
+oh_hosp_21th_retro <- covid_hospitalizations |>
+  filter(state == "oh") |>
   filter(date <= as.Date("2022-01-21")) |>
   select(date, confirm)
 ```
 
-We then use the `estimate_infections` function contained in `EpiNow2` on this data set to obtain a nowcast, forecast and reproduction number estimate.
+We then use the `estimate_infections()` function contained in `EpiNow2` on this data set to obtain a nowcast, forecast and reproduction number estimate. Note we haven't adjusted for truncation as there was little evidence of truncation in the weeks directly before this date.
 
 
 ```r
@@ -425,7 +441,12 @@ rt_estimates <- estimate_infections(
   generation_time = generation_time_opts(generation_time),
   delays = delay_opts(inf_to_hospitalisation),
   rt = rt_opts(
-    prior = list(mean = 1, sd = 0.1), rw = 7
+    # Here we specify a prior for hte initial value of the reproduction number
+    # We set this to be near 1 as we expect the epidemic to be growing slowly
+    # at the start of the period of interest
+    prior = list(mean = 1, sd = 0.1),
+    # This indicates the perid of the random walk we wish to use (7 days).
+    rw = 7
   ),
   # Here we have turned off the default Gaussian process prior in facvour of 
   # the random walk specified in rt_opts
@@ -435,15 +456,13 @@ rt_estimates <- estimate_infections(
     samples = 2000, warmup = 500
   ),
   obs = obs_opts(
-    family = "negbin", week_effect = TRUE
+    family = "poisson", week_effect = TRUE
   ),
   horizon = 14
 )
 ```
 
-
 ## Visualising the results
-
 
 ### Effective reproduction number estimates
 
@@ -470,7 +489,8 @@ rt_estimates |>
 
 ## Summary
 
+### Strengths
+
 ### Limitations
 
-### 
 ## References
