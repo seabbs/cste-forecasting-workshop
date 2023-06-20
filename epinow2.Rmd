@@ -97,9 +97,7 @@ covid_hospitalizations <- covidcast_signal(
 But when evaluating methods, we're often interested in how they would have performed on the data available at the time rather than the data in its final,fully-reported state. 
 This data format is equivalent to having a linelist with columns for the date of hospitalization and the date of report.
 
-If you register for a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html) (and load it into R using `options(covidcast.auth = "<your-api-key>")`), you can run the below command to download the relevant data in linelist format.
-
-(but **don't run this command yourself if you don't have an API key loaded**!)
+> :warning: **Don't run this command yourself if you don't have a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html) key loaded**!
 
 ```{r, eval = FALSE}
 dates <- seq(as.Date("2021-12-03"), as.Date("2022-03-01"), by = "day")
@@ -122,6 +120,8 @@ covid_hospitalizations_by_vintage <- dates |>
   )) |>
   as_tibble()
 ```
+
+If you would like to run this command yourself, you can do so by removing the `eval = FALSE` from the above chunk after registering for a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html) and loading it into R using `options(covidcast.auth = "<your-api-key>")`.
 
 Rather make everyone get an API key and query the `covidcast` API themselves, we instead use the data we have already downloaded.
 
@@ -257,7 +257,8 @@ truncation_est <- covid_hospitalizations_reporting_cdf |>
   group_by(date) |>
   mutate(confirm = max(confirm, dplyr::lag(confirm, default = 0))) |>
   ungroup() |>
-  # over the new year reporting was delayed. This leads to problems for the model
+  # Over the new year reporting was unusually delayed.
+  # This leads to problems for the model
   filter(report_date != as.Date("2022-01-05")) |>
   select(report_date, date, confirm) |>
   group_split(report_date) |>
@@ -284,11 +285,17 @@ plot(truncation_dist)
 
 ## Generation time estimate
 
-The generation time is the time between infection of an individual and infection of their infector. In order to estimate the effective reproduction number with the renewal equation we need an estimae of  the generation time so that we can relate the number of infections on day $t$ to the number of infections on day $t - \tau$ where $\tau$ is the index of the generation time distribution. Mathematically this is
+The generation time is the time between infection of an individual and infection of their infector.
+In order to estimate the effective reproduction number with the renewal equation we need an estimate of the generation time.
+With this quantity, we relate the number of infections on day $t$ to the number of infections on day $t - \tau$ where $\tau$ is the index of the generation time distribution. Mathematically this is
 
 $$ I_t = R_t \sum_{tau = 1}^T I_{t - \tau} G(\tau), $$
 
-where $T$ is the maximum lenght of the generation time. Rather than estimating this here instead we use an estimate from the literature. Specifically we use an estimate from Ganyani et al. (2020) which is based on several hundred cases of COVID-19 in China. For a real-world analysis we recommend thinking carefully about which generation time distribution to use. For example, the Ganyani et al. (2020) estimate is based on a sample of cases from China and so may not be representative of the generation time in other settings.
+where $T$ is the maximum length of the generation time. 
+Rather than estimating the generation time here, we instead use an estimate from the literature. 
+Specifically we use an estimate from [Ganyani et al. (2020)](https://doi.org/10.2807%2F1560-7917.ES.2020.25.17.2000257) which is based on a few hundred cases of COVID-19 in China.
+For a real-world analysis we recommend thinking carefully about which generation time distribution to use. 
+For example, the [Ganyani et al. (2020)](https://doi.org/10.2807%2F1560-7917.ES.2020.25.17.2000257) estimate is based on a sample of cases from China and so may not be representative of the generation time in other settings.
 
 ```{r}
 generation_time <- get_generation_time(
@@ -298,7 +305,7 @@ generation_time <- get_generation_time(
 generation_time
 ```
 
-We can now visualise this distribution.
+We can now visualize this distribution.
 
 ```{r}
 plot(generation_time)
@@ -310,7 +317,7 @@ The delay between infection and hospitalization can be decomposed into two distr
 
 ### Incubation period
 
-The incubation period is the time between infection and symptom onset. Here we use an estimate from Lauer et al. (2020) which is based again based on a few hundred cases of COVID-19 in China. For a real-world analysis we recommend thinking carefully about which incubation period distribution to use just as we did for the generation time.
+The incubation period is the time between infection and symptom onset. Here we use an estimate from [Lauer et al. (2020)](https://doi.org/10.7326%2FM20-0504) which is based on a few hundred cases of COVID-19 in China. For a real-world analysis we recommend thinking carefully about which incubation period distribution, just as we did for the generation time.
 
 ```{r}
 incubation_period <- get_incubation_period(
@@ -320,7 +327,7 @@ incubation_period <- get_incubation_period(
 incubation_period
 ```
 
-We can now visualise this distribution.
+We can now visualize this distribution.
 
 ```{r}
 plot(incubation_period)
@@ -328,7 +335,7 @@ plot(incubation_period)
 
 ### Delay from symptom onset to hospitalization
 
-The delay from symptom onset to hospitalization is the time between symptom onset and hospital admission. This typically depends on the severity of sypmtoms, the robustness of the health system and the behaviour of the individual. Here we use a toy estimate but ideally data would be available to estimate this quantity.
+The delay from symptom onset to hospitalization is the time between symptom onset and hospital admission. This time typically depends on the severity of symptoms, the robustness of the health system and the behavior of the individual. Here we use a toy estimate but ideally data would be available to estimate this quantity.
 
 ```{r}
 ## Delay from symptom onset to report
@@ -340,7 +347,7 @@ reporting_delay <- dist_spec(
 reporting_delay
 ```
 
-We can again visualise this distribution.
+We can again visualize this distribution.
 
 ```{r}
 plot(reporting_delay)
@@ -348,7 +355,9 @@ plot(reporting_delay)
 
 ### Convolving the delay from infection to hospitalization
 
-As the incubation period and reporting delay can be represented as probability mass functiosn (i.e., vectors of probabilities) we can convolve them to find the distribution of delays from infection to hospitalization. This helps reduce the computational burden of the model as we do not need to model multiple delays. It is also useful as it allows us to understand the combined effect of the incubation period and reporting delay on the delay from infection to hospitalisation.
+As the incubation period and reporting delay can be represented as probability mass functions (i.e., vectors of probabilities) we can convolve them to find the distribution of delays from infection to hospitalization.
+Calculating this convolution outside of the model helps reduce the computational burden as we do not need to account for multiple delays.
+It is also useful as it allows us to understand the combined effect of the incubation period and reporting delay on the delay from infection to hospitalisation.
 
 ```{r}
 inf_to_hospitalization <- incubation_period + reporting_delay
@@ -382,8 +391,12 @@ oh_hosp_28th_retro <- covid_hospitalizations |>
   select(date, confirm)
 ```
 
-We then use the `estimate_infections()` function contained in `EpiNow2` on this data set to obtain a nowcast, forecast and reproduction number estimate. This model uses a renewal equation based method to estimate the reproduction number and then convolves this with the incubation period and reporting delay we defined earlier to obtain a nowcast. It generates a forecast extrapolating the reproduction number estimate into the future. This is just an example model as there are many other ways to estimate the reproduction number and many other ways to extrapolate it into the future. We recommend thinking carefully about which model to use for your analysis.
+We then use the `estimate_infections()` function contained in `EpiNow2` on this data set to obtain a nowcast, forecast and reproduction number estimate.
+This model uses a renewal equation based method to estimate the reproduction number and then convolves this with the incubation period and reporting delay we defined earlier to obtain a nowcast.
+It generates a forecast extrapolating the reproduction number estimate into the future. This is just an example model as there are many other ways to estimate the reproduction number and many other ways to extrapolate it into the future. We recommend thinking carefully about which model to use for your analysis.
 
+ > **Note:** We haven't adjusted for truncation as there was little evidence of truncation in the weeks directly before this date.
+ 
 ```{r estimate_infections}
 options(mc.cores = 4)
 
@@ -421,8 +434,6 @@ rt_estimates <- estimate_infections(
   horizon = 14
 )
 ```
-
- > **Note:** We haven't adjusted for truncation as there was little evidence of truncation in the weeks directly before this date.
 
 ## Visualising the results
 
