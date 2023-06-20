@@ -102,19 +102,19 @@ covid_hospitalizations_by_vintage <- dates |>
 Rather than repeatedly querying the `covidcast` API we instead use the data we have already downloaded.
 
 ```{r}
-oh_covid_hospitalizations <- readRDS(
-  here("data", "oh_covid_hospitalizations.rds")
+covid_hospitalizations <- readRDS(
+  here("data", "covid_hospitalizations.rds")
 ) |>
   as_tibble()
 
-glimpse(oh_covid_hospitalizations)
+glimpse(covid_hospitalizations)
 
-oh_covid_hospitalizations_by_vintage <- readRDS(
-  here("data", "oh_covid_hospitalizations_by_vintage.rds")
+covid_hospitalizations_by_vintage <- readRDS(
+  here("data", "covid_hospitalizations_by_vintage.rds")
 ) |>
   as_tibble()
 
-glimpse(oh_covid_hospitalizations_by_vintage)
+glimpse(covid_hospitalizations_by_vintage)
 ```
 
 # Data exploration
