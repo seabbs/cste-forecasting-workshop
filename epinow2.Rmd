@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-* This tutorial is partly based on this [nowcasting example](https://github.com/epiforecasts/nowcasting.example) from Sam Abbott and Sebastian Funk.*
+_This tutorial is partly based on this [nowcasting example](https://github.com/epiforecasts/nowcasting.example) from Sam Abbott and Sebastian Funk._
 
 ## Summary
 
@@ -347,4 +347,9 @@ rt_estimates |>
   )
 ```
 
+## Summary
+
+### Limitations
+
+### 
 ## References
