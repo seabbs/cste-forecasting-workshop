@@ -123,8 +123,8 @@ glimpse(covid_hospitalizations_by_vintage)
 
 We start by visualising the currently reported hospitalisations for this time period.
 
-```{r plot-obs}
-oh_covid_hospitalizations |>
+```{r plot-obs, fig.height = 9}
+covid_hospitalizations |>
   ggplot() +
   aes(x = date, y = confirm) +
   geom_col(alpha = 0.6) +
@@ -132,21 +132,22 @@ oh_covid_hospitalizations |>
   labs(
     x = "Date of hospitalisation",
     y = "Hospitalisations",
-    title = "Hospitalisations in Ohio for the winter 2021-2022 wave"
-  )
+    title = "Hospitalisations in select sates for the winter 2021-2022 wave"
+  ) +
+  facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
 
 ## Visualise hosptialisations by date of report
 
 We now need to overlay what was actually observed at the time. We can do this by using the `oh_covid_hospitalizations_by_vintage` data frame to find the number of hospitalisations that were reported on each date.
 
-```{r plot-obs-vintage}
-oh_covid_hospitalizations |>
+```{r plot-obs-vintage, fig.height = 9}
+covid_hospitalizations |>
   ggplot() +
   aes(x = date, y = confirm) +
   geom_point(alpha = 0.6) +
   geom_line(
-    data = oh_covid_hospitalizations_by_vintage,
+    data = covid_hospitalizations_by_vintage,
     aes(x = date, y = confirm, col = report_date, group = report_date),
     alpha = 0.8
   ) +
@@ -155,10 +156,11 @@ oh_covid_hospitalizations |>
   labs(
     x = "Date of hospitalisation",
     y = "Hospitalisations",
-    title = "Hospitalisations in Ohio for the winter 2021-2022 wave"
+    title = "Hospitalisations in select states for the winter 2021-2022 wave"
   ) +
   guides(col = guide_colorbar(title = "Date of report", barwidth = 15)) +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") +
+  facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
 
 You should be able to see here that the data as observed in real-time is right truncated due to delays in reporting (i.e., it is an undercount of what will eventually be reported). If left uncorrected this can lead to an underestimation of the effective reproduction number, inaccurate forecasts, and potentially mislead policy makers using these metrics.
@@ -167,11 +169,11 @@ You should be able to see here that the data as observed in real-time is right t
 
 After way at looking at this is to plot the distribution of reporting delays. We can do this by calculating the delay between the date of hospitalisation and the date of report for each hospitalisation.
 
-```{r plot-delay}
-oh_covid_hospitalizations_reporting_cdf <-
-  oh_covid_hospitalizations_by_vintage |>
+```{r plot-delay, fig.height = 9}
+covid_hospitalizations_reporting_cdf <-
+  covid_hospitalizations_by_vintage |>
   filter(date >= as.Date("2021-12-14")) |>
-  group_by(date) |>
+  group_by(date, state) |>
   group_modify(
     ~ mutate(.x,
       diff = confirm - lag(confirm, default = 0),
@@ -186,19 +188,20 @@ oh_covid_hospitalizations_reporting_cdf <-
     cdf = confirm / final_reported
   )
 
-glimpse(oh_covid_hospitalizations_reporting_cdf)
+glimpse(covid_hospitalizations_reporting_cdf)
 
-oh_covid_hospitalizations_reporting_cdf |>
-  filter(delay <= 14) |>
+covid_hospitalizations_reporting_cdf |>
+  filter(delay <= 10) |>
   ggplot() +
   aes(x = delay, y = cdf, group = date) +
-  geom_step(alpha = 0.6) +
+  geom_step(alpha = 0.4) +
   theme_bw() +
   labs(
     x = "Reporting delay (days)",
     y = "Hospitalisations reported relative to the final count",
-    title = "Reporting delay in Ohio for the winter 2021-2022 wave"
-  )
+    title = "Reporting delay in select states for the winter 2021-2022 wave"
+  ) + 
+  facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
 
 ## Estimating the reporting delay
