@@ -58,6 +58,7 @@ oh_covid_hospitalizations <- covidcast_signal(
       geo_type = "state",
       geo_value = "oh"
     ) |>
+      as_tibble() |>
       filter(issue == max(issue)) |>
       select(geo_value, time_value, value) |>
       rename(state = geo_value, date = time_value, confirm = value)
@@ -66,7 +67,7 @@ oh_covid_hospitalizations <- covidcast_signal(
 Rather than just downloading the data as it is available now we can also download versions of the data that would have been available at the time. This is equivalent to having a linelist with columns for the date of hospitalisiation and the date of report (*To download this much data you may need to register for a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html)*).
 
 ```{r, eval = FALSE}
-dates <- seq(as.Date("2021-12-31"), as.Date("2022-03-01"), by = "day")
+dates <- seq(as.Date("2021-12-03"), as.Date("2022-03-01"), by = "day")
 # Read in the data for each date
 oh_covid_hospitalizations_by_vintage <- dates |>
   purrr::map_df(\(x) (
@@ -83,7 +84,8 @@ oh_covid_hospitalizations_by_vintage <- dates |>
       select(report_date, geo_value, time_value, value) |>
       rename(state = geo_value, date = time_value, confirm = value) |>
       arrange(date, report_date)
-  ))
+  )) |>
+  as_tibble()
 ```
 
 Rather than repeatedly querying the `covidcast` API we instead use the data we have already downloaded.
@@ -133,22 +135,18 @@ oh_covid_hospitalizations |>
   aes(x = date, y = confirm) +
   geom_point(alpha = 0.6) +
   geom_line(
-    data = oh_covid_hospitalizations_by_vintage |>
-      filter(
-        report_date %in% seq(
-          as.Date("2021-12-31"),
-          as.Date("2022-03-01"),
-          by = "week")
-        ),
-    aes(x = date, y = confirm, col = report_date, group = report_date)
+    data = oh_covid_hospitalizations_by_vintage,
+    aes(x = date, y = confirm, col = report_date, group = report_date),
+    alpha = 0.8
   ) +
+  scale_y_log10() +
   theme_bw() +
   labs(
     x = "Date of hospitalisation",
     y = "Hospitalisations",
     title = "Hospitalisations in Ohio for the winter 2021-2022 wave"
   ) +
-  guides(col = guide_legend(title = "Date of report")) +
+  guides(col = guide_colorbar(title = "Date of report", barwidth = 15)) +
   theme(legend.position = "bottom")
 ```
 
