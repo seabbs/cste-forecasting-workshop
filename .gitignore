@@ -1,2 +1,3 @@
 *.html
 *.Rmd
+!epinow2.Rmd
