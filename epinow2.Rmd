@@ -58,16 +58,16 @@ library(here) # for file paths
 ## Load the data
 
 Use the [covicast](https://cmu-delphi.github.io/covidcast/covidcastR/) package to read in data on confirmed covid-19 hospital admissions. The primary source for these data is the HHS state-level COVID-19 hospitalization time series, which can be found on [HealthData.gov](https://healthdata.gov/Hospital/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/g62h-syeh). The [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package provides a convenient way to read in a subset of the full data set.
-Here, we focus on the data from Ohio during the Omicron wave in winter 2021-2022. We could download the most recent version of this data directly using,
+Here, we focus on the data from New York, Utah, Ohio, Virginia, and North Carolina during the Omicron wave in winter 2021-2022. We could download the most recent version of this data directly using,
 
 ```{r, eval = FALSE}
-oh_covid_hospitalizations <- covidcast_signal(
+covid_hospitalizations <- covidcast_signal(
       data_source = "hhs",
       signal = "confirmed_admissions_covid_1d",
       start_day = "2021-12-01",
       end_day = "2022-02-01",
       geo_type = "state",
-      geo_value = "oh"
+      geo_value = c("ny", "ut", "oh", "va", "nc")
     ) |>
       as_tibble() |>
       filter(issue == max(issue)) |>
@@ -80,7 +80,7 @@ Rather than just downloading the data as it is available now we can also downloa
 ```{r, eval = FALSE}
 dates <- seq(as.Date("2021-12-03"), as.Date("2022-03-01"), by = "day")
 # Read in the data for each date
-oh_covid_hospitalizations_by_vintage <- dates |>
+covid_hospitalizations_by_vintage <- dates |>
   purrr::map_df(\(x) (
     covidcast_signal(
       data_source = "hhs",
@@ -89,7 +89,7 @@ oh_covid_hospitalizations_by_vintage <- dates |>
       end_day = "2022-02-01",
       as_of = x,
       geo_type = "state",
-      geo_value = "oh"
+      geo_value = c("ny", "ut", "oh", "va", "nc")
     ) |>
       mutate(report_date = x) |> # Add the date of report
       select(report_date, geo_value, time_value, value) |>
