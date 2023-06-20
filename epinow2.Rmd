@@ -56,10 +56,24 @@ library("covidcast") # for downlooading HHC hospitalisation data
 library(here) # for file paths
 ```
 
+## Specify states of interest
+
+To start, we want to examine trends from several states. 
+Here, we focus on the data from New York, Utah, Ohio, Virginia, and North Carolina during the Omicron wave in winter 2021-2022.
+
+```{r specify-states}
+states_of_interest <- c("ny", "ut", "oh", "va", "nc")
+```
+
+
+If you're interested in looking at your state or adding some different states
+for comparison, feel free to add an abbreviated state name to the vector above
+in `epinow2.Rmd`.
+
 ## Load the data
 
 Use the [covicast](https://cmu-delphi.github.io/covidcast/covidcastR/) package to read in data on confirmed covid-19 hospital admissions. The primary source for these data is the HHS state-level COVID-19 hospitalization time series, which can be found on [HealthData.gov](https://healthdata.gov/Hospital/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/g62h-syeh). The [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package provides a convenient way to read in a subset of the full data set.
-Here, we focus on the data from New York, Utah, Ohio, Virginia, and North Carolina during the Omicron wave in winter 2021-2022. We could download the most recent version of this data directly using,
+We could download the most recent version of this data directly using,
 
 ```{r, eval = FALSE}
 covid_hospitalizations <- covidcast_signal(
@@ -68,7 +82,7 @@ covid_hospitalizations <- covidcast_signal(
       start_day = "2021-12-01",
       end_day = "2022-02-01",
       geo_type = "state",
-      geo_value = c("ny", "ut", "oh", "va", "nc")
+      geo_value = states_of_interest
     ) |>
       as_tibble() |>
       filter(issue == max(issue)) |>
@@ -90,7 +104,7 @@ covid_hospitalizations_by_vintage <- dates |>
       end_day = "2022-02-01",
       as_of = x,
       geo_type = "state",
-      geo_value = c("ny", "ut", "oh", "va", "nc")
+      geo_value = states_of_interest
     ) |>
       mutate(report_date = x) |> # Add the date of report
       select(report_date, geo_value, time_value, value) |>
