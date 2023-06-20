@@ -28,12 +28,12 @@ _This tutorial is partly based on this [nowcasting example](https://github.com/e
 ## Summary
 
 - In this tutorial we make use of [EpiNow2](https://epiforecasts.io/EpiNow2/), a toolset for real-time analysis of infectious disease dynamics, for estimating reporting delays and using them to conduct a nowcast. 
-- We first explore the HSS hospitalisation data and estimate the reporting delay distribution using `EpiNow2`.
+- We first explore the HSS hospitalization data and estimate the reporting delay distribution using `EpiNow2`.
 - We then draw from the literature to define a plausible incubation period and reporting delay
 - We then show how the these estimates may be used in `EpiNow2` to perform nowcasts, forecasts and estimation of reproduction numbers and growth rates. 
-- Finally, we summarise strenghts and weaknesses of this approach and highlight other options and areas for future work.
+- Finally, we summarise strengths and weaknesses of this approach and highlight other options and areas for future work.
 
-For more `EpiNow2`  see the [the package documentation](https://epiforecasts.io/EpiNow2/). An [alternative approach](https://package.epinowcast.org) to the problems discussed in this tutorial is contained in `epinowcast`, this package is still under active development but aims to address the limitations `EpiNow2` with a view to eventually replacing it.
+For more about the `EpiNow2` package see the [the package documentation](https://epiforecasts.io/EpiNow2/). An [alternative approach](https://package.epinowcast.org) to the problems discussed in this tutorial is contained in the `epinowcast` package. This package is still under active development but aims to address the limitations `EpiNow2` with a view to eventually replacing it.
 
 ## Load required libraries
 
@@ -42,17 +42,17 @@ We first load the packages required for this tutorial. These can be installed us
 renv::restore()
 ```
 
-> :warning: **`renv::restore()` will take some time to run and produce output**: It is a command that will automatically load or install the correct versions of all packages needed to run this analysis. Ideally we recommend doing this sometime before you want to work through the rest of the tutorial as it may take some time.
+> :warning: **`renv::restore()` will take some time to run and produce output**: It is a command that will automatically load or install the correct versions of all packages needed to run this analysis. Ideally, we recommend running it sometime before you want to work through the rest of the tutorial as it may take some time.
 
 ```{r init}
-# Note this is the development version.
+# Note this is the development version of EpiNow2.
 # Docs here: https://epiforecasts.io/EpiNow2/dev/
 library("EpiNow2")
 library("dplyr") # for manipulating data
 library("ggplot2") # for plotting data
 library("tidyr") # for manipulating data
 library("purrr") # for manipulating data
-library("covidcast") # for downlooading HHC hospitalisation data
+library("covidcast") # for downlooading HHC hospitalization data
 library(here) # for file paths
 ```
 
@@ -72,8 +72,12 @@ in `epinow2.Rmd`.
 
 ## Load the data
 
-Use the [covicast](https://cmu-delphi.github.io/covidcast/covidcastR/) package to read in data on confirmed covid-19 hospital admissions. The primary source for these data is the HHS state-level COVID-19 hospitalization time series, which can be found on [HealthData.gov](https://healthdata.gov/Hospital/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/g62h-syeh). The [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package provides a convenient way to read in a subset of the full data set.
-We could download the most recent version of this data directly using,
+We use the [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package to read in data on confirmed Covid-19 hospital admissions. 
+The primary source for these data is the HHS state-level COVID-19 hospitalization time series, which can be found on [HealthData.gov](https://healthdata.gov/Hospital/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/g62h-syeh).
+The [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package provides a convenient way to read in a subset of the full data set.
+Here, we focus on the data from New York, Utah, Ohio, Virginia, and North Carolina during the Omicron wave in the winter of 2021-2022. 
+
+We _could_ download the most recent version of this data directly using:
 
 ```{r, eval = FALSE}
 covid_hospitalizations <- covidcast_signal(
@@ -90,7 +94,12 @@ covid_hospitalizations <- covidcast_signal(
       rename(state = geo_value, date = time_value, confirm = value)
 ```
 
-Rather than just downloading the data as it is available now we can also download versions of the data that would have been available at the time. This is equivalent to having a linelist with columns for the date of hospitalisiation and the date of report (*To download this much data you may need to register for a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html). This then needs to be loaded into R using `options(covidcast.auth = "<your-api-key")`*).
+But when evaluating methods, we're often interested in how they would have performed on the data available at the time rather than the data in its final,fully-reported state. 
+This data format is equivalent to having a linelist with columns for the date of hospitalization and the date of report.
+
+If you register for a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html) (and load it into R using `options(covidcast.auth = "<your-api-key>")`), you can run the below command to download the relevant data in linelist format.
+
+(but **don't run this command yourself if you don't have an API key loaded**!)
 
 ```{r, eval = FALSE}
 dates <- seq(as.Date("2021-12-03"), as.Date("2022-03-01"), by = "day")
@@ -114,7 +123,7 @@ covid_hospitalizations_by_vintage <- dates |>
   as_tibble()
 ```
 
-Rather than repeatedly querying the `covidcast` API we instead use the data we have already downloaded.
+Rather make everyone get an API key and query the `covidcast` API themselves, we instead use the data we have already downloaded.
 
 ```{r}
 covid_hospitalizations <- readRDS(
@@ -134,9 +143,11 @@ glimpse(covid_hospitalizations_by_vintage)
 
 # Data exploration
 
-## Visualise  hospitalisations
+## Visualize hospitalizations
 
-We start by visualising the currently reported hospitalisations for this time period.
+We start by visualizing the currently reported hospitalizations for this time period.
+We're treating these reports as finalized because its unlikely there will be
+substantial revisions in hospitalizations from so long ago.
 
 ```{r plot-obs, fig.height = 9}
 covid_hospitalizations |>
@@ -145,9 +156,9 @@ covid_hospitalizations |>
   geom_col(alpha = 0.6) +
   theme_bw() +
   labs(
-    x = "Date of hospitalisation",
-    y = "Hospitalisations",
-    title = "Hospitalisations in select sates for the winter 2021-2022 wave"
+    x = "Date of hospitalization",
+    y = "hospitalizations",
+    title = "hospitalizations in select sates for the winter 2021-2022 wave"
   ) +
   facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
@@ -173,9 +184,9 @@ covid_hospitalizations |>
   scale_y_log10() +
   theme_bw() +
   labs(
-    x = "Date of hospitalisation",
-    y = "Hospitalisations",
-    title = "Hospitalisations in select states for the winter 2021-2022 wave"
+    x = "Date of hospitalization",
+    y = "Hospitalizations",
+    title = "Hospitalizations in select states for the winter 2021-2022 wave"
   ) +
   guides(col = guide_colorbar(title = "Date of report", barwidth = 15)) +
   theme(legend.position = "bottom") +
@@ -186,9 +197,10 @@ You should be able to see here that the data as observed in real-time is right t
 
 However, it appears that hospitalisations are also very commonly corrected down, this indicates a more complex reporting mechanism is at play. Unfortunately, currently currently there are few available methods that can address this kind of reporting structure and the development of new ones is likely dependent on the interaction between those collecting the data and those developing new methods.
 
-## Visualise the reporting delay
+## Visualize the reporting delay
 
-Another way at looking at this is to plot the distribution of reporting delays. We can do this by calculating the delay between the date of hospitalisation and the date of report for each hospitalisation.
+We can also plot the distribution of reporting delays to look at how much delay is normal. 
+For this plot, we calculate the delay between the date of hospitalization and the date of report for each hospitalization.
 
 ```{r plot-delay, fig.height = 9}
 covid_hospitalizations_reporting_cdf <-
@@ -219,17 +231,20 @@ covid_hospitalizations_reporting_cdf |>
   theme_bw() +
   labs(
     x = "Reporting delay (days)",
-    y = "Hospitalisations reported relative to the final count",
+    y = "Hospitalizations reported relative to the final count",
     title = "Reporting delay in select states for the winter 2021-2022 wave"
   ) +
   facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
 
-For the rest of this tutorial we focus on Ohio. You can repeat the analysis for other states by changing the `state` variable being `filter`ed for in the following code chunks.
+> For the rest of this tutorial we focus on Ohio. You can repeat the analysis for other states by changing the `state` variable being `filter`ed for in the following code chunks.
 
 ## Estimating the reporting delay
 
-We use `EpiNow2` to estimate the distribution of reporting delays for Ohio as this method can account for right truncation when estimating delays. This will then allow us to correct for right truncation in the data, if it is present, when we estimate the reproduction number. Unfortunately (as already noted), the current model cannot account for over reporting and so we will first have to remove this from the data.
+We use `EpiNow2` to estimate the distribution of reporting delays for Ohio. 
+The model in `EpiNow2` allow us to correct for right truncation in the data when we estimate the reproduction number. 
+We restrict our data to data available between the 31st of December 2021 and the 14th of January 2022 as later we will nowcast for the 14th of January 2022 and so we want to use data that is relevant to this date.
+Unfortunately, this model cannot account for over-reporting and so we will first have to remove this from the data.
 
 ```{r estimate_delays}
 options(mc.cores = 4)
@@ -242,7 +257,7 @@ truncation_est <- covid_hospitalizations_reporting_cdf |>
   group_by(date) |>
   mutate(confirm = max(confirm, dplyr::lag(confirm, default = 0))) |>
   ungroup() |>
-  #over the new year reporting was delayed. This leads to problems for the model
+  # over the new year reporting was delayed. This leads to problems for the model
   filter(report_date != as.Date("2022-01-05")) |>
   select(report_date, date, confirm) |>
   group_split(report_date) |>
@@ -259,14 +274,13 @@ truncation_dist <- do.call(
   dist_spec, c(truncation_est$dist)
 )
 
-truncation_dist
 ```
 
 ```{r plot-truncation}
 plot(truncation_dist)
 ```
 
-**There is very little truncation in this data for this time period.** This is good news as it means we can use the data as observed to estimate the reproduction number..
+> :warning: **This plot is empty because there is very little truncation in this data for this time period.** This is good news as it means we can use the data as observed to estimate the reproduction number. However, it does mean that `estimate_truncation()` won't work well (hence the warnings you may see when running the code) as it is designed to estimate the truncation distribution for data where truncation is present.
 
 ## Generation time estimate
 
@@ -290,9 +304,9 @@ We can now visualise this distribution.
 plot(generation_time)
 ```
 
-## Delays from infection to hospitalisation
+## Delays from infection to hospitalization
 
-The delay between infection and hospitalisation can be decomposed into two distributions: the incubation period and the delay from symptom onset to hospitalisation. We can estimate these distributions using `EpiNow2` but for this tutorial we will use estimates from the literature.
+The delay between infection and hospitalization can be decomposed into two distributions: the incubation period and the delay from symptom onset to hospitalization. We can estimate these distributions using `EpiNow2` but for this tutorial we will use estimates from the literature.
 
 ### Incubation period
 
@@ -312,9 +326,9 @@ We can now visualise this distribution.
 plot(incubation_period)
 ```
 
-### Delay from symptom onset to hospitalisation
+### Delay from symptom onset to hospitalization
 
-The delay from symptom onset to hospitalisation is the time between symptom onset and hospital admission. This typically depends on the severity of sypmtoms, the robustness of the health system and the behaviour of the individual. Here we use a toy estimate motivated by our experience but ideally data would be available to estimate this quantity.
+The delay from symptom onset to hospitalization is the time between symptom onset and hospital admission. This typically depends on the severity of sypmtoms, the robustness of the health system and the behaviour of the individual. Here we use a toy estimate but ideally data would be available to estimate this quantity.
 
 ```{r}
 ## Delay from symptom onset to report
@@ -332,23 +346,23 @@ We can again visualise this distribution.
 plot(reporting_delay)
 ```
 
-### Convolving the delay from infection to hospitalisation
+### Convolving the delay from infection to hospitalization
 
-As the incubation period and reporting delay can be represented as probability mass functiosn (i.e., vectors of probabilities) we can convolve them to find the distribution of delays from infection to hospitalisation. This helps reduce the computational burden of the model as we do not need to model multiple delays. It is also useful as it allows us to understand the combined effect of the incubation period and reporting delay on the delay from infection to hospitalisation.
+As the incubation period and reporting delay can be represented as probability mass functiosn (i.e., vectors of probabilities) we can convolve them to find the distribution of delays from infection to hospitalization. This helps reduce the computational burden of the model as we do not need to model multiple delays. It is also useful as it allows us to understand the combined effect of the incubation period and reporting delay on the delay from infection to hospitalisation.
 
 ```{r}
-inf_to_hospitalisation <- incubation_period + reporting_delay
+inf_to_hospitalization <- incubation_period + reporting_delay
 ```
 
 We can now plot this convolved distribution.
 
 ```{r}
-plot(inf_to_hospitalisation)
+plot(inf_to_hospitalization)
 ```
 
 ## Putting it all together into a nowcast
 
-Now we have all the components we need to construct a nowcast. First we construct the data set of hospitalisations we wish to nowcast using data as available on the 14th of January 2022.
+Now we have all the components we need to construct a nowcast. First we construct the data set of hospitalizations we wish to nowcast using data as available on the 14th of January 2022.
 
 ```{r}
 oh_hosp_14th <- covid_hospitalizations_by_vintage |>
@@ -379,7 +393,7 @@ rt_estimates <- estimate_infections(
   # understands
   generation_time = generation_time_opts(generation_time),
   # Similarly our delay from infection to hospitalisation is also preprocessed.
-  delays = delay_opts(inf_to_hospitalisation),
+  delays = delay_opts(inf_to_hospitalization),
   rt = rt_opts(
     # Here we specify a prior for hte initial value of the reproduction number
     # We set this to be near 1 as we expect the epidemic to be growing slowly
@@ -408,7 +422,7 @@ rt_estimates <- estimate_infections(
 )
 ```
 
- Note we haven't adjusted for truncation as there was little evidence of truncation in the weeks directly before this date (as noted above).
+ > **Note:** We haven't adjusted for truncation as there was little evidence of truncation in the weeks directly before this date.
 
 ## Visualising the results
 
@@ -420,13 +434,13 @@ Using the output of `estimate_infections()` we can visualise the effective repro
 plot(rt_estimates, type = "R")
 ```
 
-### Predicted hospitalisations
+### Predicted hospitalizations
 
 Another useful plot is the predicted hospitalisations. This can be obtained using the `plot_estimates()` function. This function takes a data frame of estimates and a data frame of reported cases and plots the estimates alongside the reported cases. 
 
 Whilst the forecast is useful it is important to note that it is based on the assumption that the reproduction number remains constant at the last estimated value (though other options are supported in the package). This is unlikely to always be true in practice and so the forecast should be communicated with this in mind. 
 
-```{r plot_hospitalisations}
+```{r plot_hospitalizations}
 rt_estimates |>
   pluck("summarised") |>
   filter(variable %in% "reported_cases") |>
