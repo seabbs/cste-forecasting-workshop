@@ -1,7 +1,6 @@
 ---
 title: Estimating reporting delays and nowcasting/forecasting infections with EpiNow2 using HHS COVID-19 hospitalizations
 author: "Sam Abbott"
-author: "Kaitlyn Gostic"
 output: pdf_document
 date: "2023-06-20"
 ---
@@ -346,9 +345,6 @@ rt_estimates |>
   plot_estimates(
     reported = oh_hosp_21th_retro
   )
-plot_estimates(
-  summary(rt_estimates, type = "reported")
-)
 ```
 
 ## References
