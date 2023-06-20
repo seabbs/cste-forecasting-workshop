@@ -8,7 +8,7 @@ It can take a little time for your computer to install the necessary packages (a
 If you've never used R before, follow the detailed instructions below for a
 step-by-step guide to get set up.
 If you have R and RStudio installed on your computer, feel free to skip ahead
-to the tutorial [INSERT TUTORIAL NAME HERE].
+to the tutorial epinow2.md.
 
 # Getting set up
 
@@ -18,7 +18,7 @@ The set up process comes in three parts:
 document is sitting in your computer in a folder called `cste-forecasting-workshop`,
 then you've successfully completed this step. If not, look for a file with a *.zip
 extension in an email. Download and unzip the folder.
-  - If you're comfortable with Git and Github, you can download the repository
+  - If you're comfortable with Git and Github, you can clone the repository
   from `seabbs/cste-forecasting-workshop`
 
 2. Download and install R and Rstudio [from this website](https://posit.co/download/rstudio-desktop/)
