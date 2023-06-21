@@ -2,7 +2,6 @@
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio)
 
-
 This tutorial is meant to be an approachable introduction to estimating $R_t$.
 It's meant for any and all levels of comfort with writing code.
 
