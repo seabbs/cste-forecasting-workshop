@@ -40,6 +40,12 @@ For more about the `EpiNow2` package see the [the package documentation](https:/
 
 # Getting started
 
+## Using this tutorial
+
+This tutorial is written in [R Markdown](https://rmarkdown.rstudio.com/) and can be run in [RStudio](https://www.rstudio.com/). See the `epinow2.Rmd` file for the code used to generate this tutorial, this is also the best place to start if you want to work through the tutorial yourself.
+
+We also provide a [standalone HTML version](https://samabbott.co.uk/cste-forecasting-workshop/epinow2.html) of this tutorial that can be viewed in any web browser. This version is static and cannot be run interactively.
+
 ## Load required libraries
 
 We first load the packages required for this tutorial. These can be installed or staged
@@ -549,7 +555,9 @@ We see that the forecast performs relatively well when compared to more recent d
 
 ## Other resources
 
-- [EpiNow2 website](https://epiforecasts.io/EpiNow2/)
-- [epinowcast](https://package.epinowcast.org): This package has been designed as the successor to `EpiNow2` and is currently under development. It is designed to be more flexible and easier to use than `EpiNow2`.
+If you are interested in finding additional resources for estimating the effective reproduction number or learning about nowcasting in R, explore the following:
+
+- [EpiNow2 website](https://epiforecasts.io/EpiNow2/dev): The documentation for the `EpiNow2` package. This is the package we will be using in this tutorial. It is designed to be easy to use, robust to a wide range of contexts, and flexible.
+- [epinowcast](https://package.epinowcast.org): This package has been designed as the successor to `EpiNow2` and is currently under development. It is designed to be more general and even more flexible than `EpiNow2`.
 - [epidemia](https://imperialcollegelondon.github.io/epidemia/index.html): This is another flexible package for estimating the effective reproduction number and forecasting. It is designed to be more flexible than `EpiNow2` and `epinowcast` but is potentially more difficult to use. It also generally has less functionality for dealing with delays than `EpiNow2` and `epinowcast`.
-- [EpiEstim](https://cran.r-project.org/web/packages/EpiEstim/index.html): This is a more mature package for estimating the effective reproduction number. It exploits a mathematically relationship to fit the renewal equation very quickly but is not currently able to handle reporting delays or to produce forecasts which the use of supporting packages
+- [EpiEstim](https://cran.r-project.org/web/packages/EpiEstim/index.html): This is a more mature package for estimating the effective reproduction number. It exploits a mathematically relationship to fit the renewal equation very quickly but is not currently able to handle reporting delays or to produce forecasts which the use of supporting packages.

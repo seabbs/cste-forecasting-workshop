@@ -31,3 +31,13 @@ download all the necessary packages.
 
 These steps should take around 20 minutes. Once completed, you're all set up to
 run the code in `epinow2.Rmd` as part of the workshop.
+
+# Other resources
+
+If you're looking for more resources on estimating the effective reproduction number, or nowcasting, check out the following:
+
+- [EpiNow2 website](https://epiforecasts.io/EpiNow2/dev): The documentation for the `EpiNow2` package. This is the package we will be using in this tutorial. It is designed to be easy to use, robust to a wide range of contexts, and flexible.
+- [epinowcast](https://package.epinowcast.org): This package has been designed as the successor to `EpiNow2` and is currently under development. It is designed to be more generalised flexible than `EpiNow2`.
+- [epidemia](https://imperialcollegelondon.github.io/epidemia/index.html): This is another flexible package for estimating the effective reproduction number and forecasting. It is designed to be more flexible than `EpiNow2` and `epinowcast` but is potentially more difficult to use. It also generally has less functionality for dealing with delays than `EpiNow2` and `epinowcast`.
+- [EpiEstim](https://cran.r-project.org/web/packages/EpiEstim/index.html): This is a more mature package for estimating the effective reproduction number. It exploits a mathematically relationship to fit the renewal equation very quickly but is not currently able to handle reporting delays or to produce forecasts which the use of supporting packages
+

@@ -1613,6 +1613,11 @@ div.tocify {
 </div>
 <div id="getting-started" class="section level1">
 <h1>Getting started</h1>
+<div id="using-this-tutorial" class="section level2">
+<h2>Using this tutorial</h2>
+<p>This tutorial is written in <a href="https://rmarkdown.rstudio.com/">R Markdown</a> and can be run in <a href="https://www.rstudio.com/">RStudio</a>. See the <code>epinow2.Rmd</code> file for the code used to generate this tutorial, this is also the best place to start if you want to work through the tutorial yourself.</p>
+<p>We also provide a <a href="https://samabbott.co.uk/cste-forecasting-workshop/epinow2.html">standalone HTML version</a> of this tutorial that can be viewed in any web browser. This version is static and cannot be run interactively.</p>
+</div>
 <div id="load-required-libraries" class="section level2">
 <h2>Load required libraries</h2>
 <p>We first load the packages required for this tutorial. These can be installed or staged</p>
@@ -2070,11 +2075,12 @@ This is useful as it allows us to get a sense for the number of infections after
 </div>
 <div id="other-resources" class="section level2">
 <h2>Other resources</h2>
+<p>If you are interested in finding additional resources for estimating the effective reproduction number or learning about nowcasting in R, explore the following:</p>
 <ul>
-<li><a href="https://epiforecasts.io/EpiNow2/">EpiNow2 website</a></li>
-<li><a href="https://package.epinowcast.org">epinowcast</a>: This package has been designed as the successor to <code>EpiNow2</code> and is currently under development. It is designed to be more flexible and easier to use than <code>EpiNow2</code>.</li>
+<li><a href="https://epiforecasts.io/EpiNow2/dev">EpiNow2 website</a>: The documentation for the <code>EpiNow2</code> package. This is the package we will be using in this tutorial. It is designed to be easy to use, robust to a wide range of contexts, and flexible.</li>
+<li><a href="https://package.epinowcast.org">epinowcast</a>: This package has been designed as the successor to <code>EpiNow2</code> and is currently under development. It is designed to be more general and even more flexible than <code>EpiNow2</code>.</li>
 <li><a href="https://imperialcollegelondon.github.io/epidemia/index.html">epidemia</a>: This is another flexible package for estimating the effective reproduction number and forecasting. It is designed to be more flexible than <code>EpiNow2</code> and <code>epinowcast</code> but is potentially more difficult to use. It also generally has less functionality for dealing with delays than <code>EpiNow2</code> and <code>epinowcast</code>.</li>
-<li><a href="https://cran.r-project.org/web/packages/EpiEstim/index.html">EpiEstim</a>: This is a more mature package for estimating the effective reproduction number. It exploits a mathematically relationship to fit the renewal equation very quickly but is not currently able to handle reporting delays or to produce forecasts which the use of supporting packages</li>
+<li><a href="https://cran.r-project.org/web/packages/EpiEstim/index.html">EpiEstim</a>: This is a more mature package for estimating the effective reproduction number. It exploits a mathematically relationship to fit the renewal equation very quickly but is not currently able to handle reporting delays or to produce forecasts which the use of supporting packages.</li>
 </ul>
 </div>
 </div>
