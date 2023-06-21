@@ -68,6 +68,14 @@ library("here") # for file paths
 
 > &#128161; This tutorial depends on the development version of `EpiNow2`. You can see the documentation for the development version [here](https://epiforecasts.io/EpiNow2/dev/).
 
+## Setting the number of cores
+
+`EpiNow2` can use multiple cores to speed up the analysis - up to the number of MCMC chains used for model fitting (which here is 4). Here we set the number of cores to use to the number of cores available on your machine or 4 whichever is fewer.
+
+```{r set-cores}
+options(mc.cores = min(4, parallel::detectCores()))
+```
+
 # Specify states of interest
 
 To start, we want to examine trends from several states. 
@@ -301,8 +309,6 @@ We restrict our data to data available between the 31st of December 2021 and the
 Unfortunately, this model cannot account for over-reporting and so we will first have to remove this from the data.
 
 ```{r estimate_delays}
-options(mc.cores = 4)
-
 truncation_est <- covid_hospitalizations_reporting_cdf |>
   filter(state == nowcast_state) |>
   filter(date >= as.Date("2021-12-14")) |>
@@ -556,8 +562,6 @@ It generates a forecast extrapolating the reproduction number estimate into the 
 > &#128161; We haven't adjusted for truncation as there was little evidence of truncation in the weeks directly before this date.
  
 ```{r estimate_infections}
-options(mc.cores = 4)
-
 rt_estimates <- estimate_infections(
   reported_cases = oh_hosp_14th,
   # Our generation time estimate is first preprocessed into a format the model
