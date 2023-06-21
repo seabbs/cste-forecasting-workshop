@@ -177,7 +177,6 @@ if (!all(states_of_interest %in% covid_hospitalizations$state) ||
 }
 ```
 
-
 # Data exploration
 
 ## Visualize hospitalizations
@@ -329,7 +328,6 @@ truncation_est <- covid_hospitalizations_reporting_cdf |>
 truncation_dist <- do.call(
   dist_spec, c(truncation_est$dist)
 )
-
 ```
 
 > &#9888; **This model may throw warnings about divergent transitions.** This is because the model is trying to estimate the truncation distribution for the data but there is very little truncation in the data. This is good news as it means we can use the data as observed to estimate the reproduction number. However, it does mean that `estimate_truncation()` won't work well (hence the warnings you may see when running the code) as it is designed to estimate the truncation distribution for data where truncation is present.
@@ -344,9 +342,99 @@ plot(truncation_dist)
 
 As we saw above, there is very little truncation in the data for Ohio for this time period. Because of this, we will instead use a synthetic data set to show how to use `estimate_truncation()` to estimate the distribution of reporting delays using the latest data from Ohio (as of the 14th of January 2022).
 
-```{r synthetic-delays}
+We first define a synthetic delay,
 
+```{r synthetic-delay}
+synth_truncation <- dist_spec(
+  mean = 1.6, mean_sd = 0.025, sd = 0.5, sd_sd = 0.01, max = 15,
+  distribution = "lognormal", fixed = FALSE
+)
+synth_truncation
 ```
+
+Which we can then plot to see what it looks like,
+
+```{r plot-synthetic-delay}
+plot(synth_truncation)
+```
+
+Now we use this to generate a synthetic data set by combining it with the latest data from Ohio (as of the 14th of January 2022).
+
+```{r define-simulator-for-truncation, class.source = "fold-hide"}
+simulate_truncation <- function(index, cases, dist) {
+  set.seed(index)
+  cmf <- cumsum(
+    dlnorm(
+      1:(dist$max + 1),
+      rnorm(1, dist$mean_mean, dist$mean_sd),
+      rnorm(1, dist$sd_mean, dist$sd_sd)
+    )
+  )
+  cmf <- cmf / cmf[dist$max + 1]
+  cmf <- rev(cmf)[-1]
+  if (nrow(cases) < index + length(cmf)) {
+    stop(
+      "Not enough data to construct a synthetic data set with this ",
+      "truncation distribution and index."
+    )
+  }
+  untrunc_cases <- cases |>
+    slice_head(n = nrow(cases) - index - length(cmf))
+
+  trunc_cases <- cases |>
+    slice_head(n = nrow(cases) - index) |>
+    slice_tail(n = length(cmf)) |>
+    mutate(confirm = as.integer(confirm * cmf))
+
+  cases <- bind_rows(
+    untrunc_cases,
+    trunc_cases
+  )
+  return(cases)
+}
+```
+
+```{r synthetic-delays}
+synth_truncated_hosp <- map(c(20, 15, 10, 5, 4, 2, 1, 0),
+  simulate_truncation,
+  cases = covid_hospitalizations |>
+    filter(state == nowcast_state) |>
+    select(-state),
+  dist = synth_truncation
+)
+```
+
+We can now use `estimate_truncation()` to estimate the distribution of reporting delays for this synthetic data set.
+
+```{r estimate-synthetic-delays}
+syn_trunc_est <- estimate_truncation(
+  synth_truncated_hosp,
+  trunc_max = 15,
+  chains = 4, iter = 2000,
+  control = list(adapt_delta = 0.99, max_treedepth = 15),
+  verbose = FALSE
+)
+```
+
+Plotting the model predictions compared to synthetic data we can see that the model does a good job of reconstructing the data that will be observed in this synthetic example (we can see this as  the earliest data points have been observed fully and so can be compared to the model predictions directly).
+
+```{r plot-synthetic-delays}
+plot(syn_trunc_est)
+```
+
+Finally we can extract and plot the estimated reporting distribution,
+
+```{r estimated-synth-delay}
+est_synth_trunc_dist <- do.call(
+  dist_spec, syn_trunc_est$dist
+)
+
+est_synth_trunc_dist
+
+plot(est_synth_trunc_dist)
+```
+
+As expected for this synthetic example, the estimated distribution is very similar to the true distribution used to generate the data.
 
 # Getting ready to nowcast
 
