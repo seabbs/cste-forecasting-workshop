@@ -1599,7 +1599,9 @@ div.tocify {
 </div>
 
 
-<p><em>This tutorial is partly based on this <a href="https://github.com/epiforecasts/nowcasting.example">nowcasting example</a> from Sam Abbott and Sebastian Funk.</em></p>
+<blockquote>
+<p>💡 This tutorial is partly based on this <a href="https://github.com/epiforecasts/nowcasting.example">nowcasting example</a> from Sam Abbott and Sebastian Funk.</p>
+</blockquote>
 <div id="outline" class="section level1">
 <h1>Outline</h1>
 <ul>
@@ -1844,6 +1846,8 @@ if (!(nowcast_state %in% states_of_interest)) {
 </div>
 <div id="estimating-the-reporting-delay" class="section level1">
 <h1>Estimating the reporting delay</h1>
+<div id="using-recorded-data-vintages-for-ohio" class="section level2">
+<h2>Using recorded data vintages for Ohio</h2>
 <p>We use <code>EpiNow2</code> to estimate the distribution of reporting delays for Ohio.
 The model in <code>EpiNow2</code> allow us to correct for right truncation in the data when we estimate the reproduction number.
 We restrict our data to data available between the 31st of December 2021 and the 14th of January 2022 as later we will nowcast for the 14th of January 2022 and so we want to use data that is relevant to this date.
@@ -1883,6 +1887,11 @@ truncation_dist &lt;- do.call(
 <blockquote>
 <p>⚠ <strong>This plot is empty because there is very little truncation in this data for this time period.</strong></p>
 </blockquote>
+</div>
+<div id="using-synthetic-vintages-based-on-the-latest-data-for-ohio" class="section level2">
+<h2>Using synthetic vintages based on the latest data for Ohio</h2>
+<p>As we saw above, there is very little truncation in the data for Ohio for this time period. Because of this, we will instead use a synthetic data set to show how to use <code>estimate_truncation()</code> to estimate the distribution of reporting delays using the latest data from Ohio (as of the 14th of January 2022).</p>
+</div>
 </div>
 <div id="getting-ready-to-nowcast" class="section level1">
 <h1>Getting ready to nowcast</h1>

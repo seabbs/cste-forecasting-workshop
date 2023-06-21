@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-_This tutorial is partly based on this [nowcasting example](https://github.com/epiforecasts/nowcasting.example) from Sam Abbott and Sebastian Funk._
+> &#128161; This tutorial is partly based on this [nowcasting example](https://github.com/epiforecasts/nowcasting.example) from Sam Abbott and Sebastian Funk.
 
 # Outline
 
@@ -294,6 +294,8 @@ if (!(nowcast_state %in% states_of_interest)) {
 
 # Estimating the reporting delay
 
+## Using recorded data vintages for Ohio
+
 We use `EpiNow2` to estimate the distribution of reporting delays for Ohio. 
 The model in `EpiNow2` allow us to correct for right truncation in the data when we estimate the reproduction number. 
 We restrict our data to data available between the 31st of December 2021 and the 14th of January 2022 as later we will nowcast for the 14th of January 2022 and so we want to use data that is relevant to this date.
@@ -337,6 +339,14 @@ plot(truncation_dist)
 ```
 
 > &#9888; **This plot is empty because there is very little truncation in this data for this time period.** 
+
+## Using synthetic vintages based on the latest data for Ohio
+
+As we saw above, there is very little truncation in the data for Ohio for this time period. Because of this, we will instead use a synthetic data set to show how to use `estimate_truncation()` to estimate the distribution of reporting delays using the latest data from Ohio (as of the 14th of January 2022).
+
+```{r synthetic-delays}
+
+```
 
 # Getting ready to nowcast
 
