@@ -1,5 +1,8 @@
 # Welcome!
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio)
+
+
 This tutorial is meant to be an approachable introduction to estimating $R_t$.
 It's meant for any and all levels of comfort with writing code.
 
@@ -31,6 +34,8 @@ download all the necessary packages.
 
 These steps should take around 20 minutes. Once completed, you're all set up to
 run the code in `epinow2.Rmd` as part of the workshop.
+
+If you have any issues, we also have a [binder](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio) set up with all the necessary packages installed. This will take a little while to load but should allow you to run the code in `epinow2.Rmd` as part of the workshop. Note that this will not save any changes you make to the code and may be slower than running the code on your own machine.
 
 # Other resources
 
