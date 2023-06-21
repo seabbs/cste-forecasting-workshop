@@ -1,3 +1,4 @@
 *.Rmd
 !epinow2.Rmd
 .Rproj.user
+epinow2_cache/
