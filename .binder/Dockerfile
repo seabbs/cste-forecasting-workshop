@@ -14,13 +14,5 @@ RUN apt-get update && \
 # Switch back to jovyan to install R packages
 USER ${NB_USER}
 
-RUN wget https://github.com/seabbs/cste-forecasting-workshop/raw/main/renv.lock
-
-RUN mkdir renv
-RUN chmod u+w ./renv
-RUN wget https://github.com/seabbs/cste-forecasting-workshop/raw/main/renv
-
 RUN Rscript -e 'install.packages("renv")'
 RUN Rscript -e 'renv::restore()'
-
-RUN rm -r renv.lock renv
