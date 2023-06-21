@@ -1638,6 +1638,11 @@ library(&quot;here&quot;) # for file paths</code></pre>
 <p>💡 This tutorial depends on the development version of <code>EpiNow2</code>. You can see the documentation for the development version <a href="https://epiforecasts.io/EpiNow2/dev/">here</a>.</p>
 </blockquote>
 </div>
+<div id="setting-the-number-of-cores" class="section level2">
+<h2>Setting the number of cores</h2>
+<p><code>EpiNow2</code> can use multiple cores to speed up the analysis - up to the number of MCMC chains used for model fitting (which here is 4). Here we set the number of cores to use to the number of cores available on your machine or 4 whichever is fewer.</p>
+<pre class="r"><code>options(mc.cores = min(4, parallel::detectCores()))</code></pre>
+</div>
 </div>
 <div id="specify-states-of-interest" class="section level1">
 <h1>Specify states of interest</h1>
@@ -1852,9 +1857,7 @@ if (!(nowcast_state %in% states_of_interest)) {
 The model in <code>EpiNow2</code> allow us to correct for right truncation in the data when we estimate the reproduction number.
 We restrict our data to data available between the 31st of December 2021 and the 14th of January 2022 as later we will nowcast for the 14th of January 2022 and so we want to use data that is relevant to this date.
 Unfortunately, this model cannot account for over-reporting and so we will first have to remove this from the data.</p>
-<pre class="r"><code>options(mc.cores = 4)
-
-truncation_est &lt;- covid_hospitalizations_reporting_cdf |&gt;
+<pre class="r"><code>truncation_est &lt;- covid_hospitalizations_reporting_cdf |&gt;
   filter(state == nowcast_state) |&gt;
   filter(date &gt;= as.Date(&quot;2021-12-14&quot;)) |&gt;
   filter(report_date &gt;= as.Date(&quot;2021-12-31&quot;)) |&gt;
@@ -2060,9 +2063,7 @@ It generates a forecast extrapolating the reproduction number estimate into the 
 <blockquote>
 <p>💡 We haven’t adjusted for truncation as there was little evidence of truncation in the weeks directly before this date.</p>
 </blockquote>
-<pre class="r"><code>options(mc.cores = 4)
-
-rt_estimates &lt;- estimate_infections(
+<pre class="r"><code>rt_estimates &lt;- estimate_infections(
   reported_cases = oh_hosp_14th,
   # Our generation time estimate is first preprocessed into a format the model
   # understands
