@@ -8,7 +8,7 @@ It can take a little time for your computer to install the necessary packages (a
 If you've never used R before, follow the detailed instructions below for a
 step-by-step guide to get set up.
 If you have R and RStudio installed on your computer, feel free to skip ahead
-to the tutorial epinow2.md.
+[to the tutorial](https://samabbott.co.uk/cste-forecasting-workshop/epinow2.html) epinow2.md.
 
 # Getting set up
 
