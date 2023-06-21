@@ -1,6 +1,6 @@
 ---
 title: Estimating reporting delays and nowcasting/forecasting infections with EpiNow2 using HHS COVID-19 hospitalizations
-author: "Sam Abbott, Zachary Susswein, and Kaitlyn Gostic"
+author: "Sam Abbott, Zachary Susswein, and Katelyn Gostic"
 output:
   bookdown::html_document2:
     theme: cosmo
