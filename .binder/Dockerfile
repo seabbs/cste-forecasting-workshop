@@ -14,5 +14,4 @@ RUN apt-get update && \
 # Switch back to jovyan to install R packages
 USER ${NB_USER}
 
-RUN Rscript -e 'install.packages("renv")'
 RUN Rscript -e 'renv::restore()'
