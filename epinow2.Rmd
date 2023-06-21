@@ -77,9 +77,7 @@ Here, we focus on the data from New York, Utah, Ohio, Virginia, and North Caroli
 states_of_interest <- c("ny", "ut", "oh", "va", "nc")
 ```
 
-If you're interested in looking at your state or adding some different states
-for comparison, feel free to add an abbreviated state name to the vector above
-in `epinow2.Rmd`.
+If you're interested in looking at your state or adding some different states for comparison, feel free to add an abbreviated state name to the vector above in `epinow2.Rmd`.
 
 # Load the data
 
@@ -88,10 +86,7 @@ The primary source for these data is the HHS state-level COVID-19 hospitalizatio
 The [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package provides a convenient way to read in a subset of the full dataset.
 Here, we focus on the data from New York, Utah, Ohio, Virginia, and North Carolina during the Omicron wave in the winter of 2021-2022. 
 
-We _could_ download the most recent version of this data directly. If you're
-interested in how to do that, check out the hidden code chunk below. It pulls 
-the most up-to-date version of the data and stores it in a data frame called 
-`covid_hospitalizations`.
+We _could_ download the most recent version of this data directly. If you're interested in how to do that, check out the hidden code chunk below. It pulls the most up-to-date version of the data and stores it in a data frame called `covid_hospitalizations`.
 
 > &#9888; **Don't run this command yourself if you don't have a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html) key loaded into R using `options(covidcast.auth = "<your-api-key>")`**!. Instead go to the next step.
 
@@ -110,14 +105,11 @@ covid_hospitalizations <- covidcast_signal(
       rename(state = geo_value, date = time_value, confirm = value)
 ```
 
-When evaluating methods, we're often interested in how they would have performed
-on the data available at the time rather than the data in its final, fully-reported state.
-This data format is equivalent to having a linelist with columns for the date of hospitalization and the date of report.
+When evaluating methods, we're often interested in how they would have performed on the data available at the time rather than the data in its final, fully-reported state. This data format is equivalent to having a linelist with columns for the date of hospitalization and the date of report.
 
 > &#128161; We use the terms **report date** and **vintage** to indicate the as-of date (on what date was this snapshot of the data observed). We use **event date** or simply **date** to indicate where a data point falls along the x-axis of the epidemic time series. 
 
-If you're interested in downloading the vintages from winter 2021-2022 yourself, 
-check out the hidden code chunk below.
+If you're interested in downloading the vintages from winter 2021-2022 yourself, check out the hidden code chunk below.
 
 > &#9888; **Don't run this command yourself if you don't have a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html) key loaded R using `options(covidcast.auth = "<your-api-key>")`**!. Instead go to the next step.
 
@@ -184,9 +176,7 @@ if (!all(states_of_interest %in% covid_hospitalizations$state) ||
 
 ## Visualize hospitalizations
 
-We start by visualizing the currently reported hospitalizations for this time period.
-We're treating these reports as finalized because it's unlikely there will be
-substantial revisions for hospitalizations from so long ago.
+We start by visualizing the currently reported hospitalizations for this time period. We're treating these reports as finalized because it's unlikely there will be substantial revisions for hospitalizations from so long ago.
 
 ```{r plot-obs, fig.height = 9}
 covid_hospitalizations |>
@@ -208,8 +198,7 @@ As expected we see a large increase in hospitalizations in all states during the
 
 While it is interesting to look back retrospectively, it is important to remember that the data we have now is not the same as the data that was available at the time. This can occur for a number of reasons; for example, there may be a delay between the date of hospitalization and the date of report or there may be changes in how hospitalizations are measured which leads to a retrospective change in the number of hospitalizations.
 
-To begin to unpack these changes we can look at the number of hospitalizations as it was reported at the time. If the changes are only caused by reporting delays, we should see that that the number of hospitalizations reported on each date increases over time as more data becomes available. If reporting patterns are more complex than this, hospitalizations could increase or decrease over time.
-For example if hospitalizations can be recategorized to a different day, then the number of hospitalizations reported for a given day may decrease as well as increase over time.
+To begin to unpack these changes we can look at the number of hospitalizations as it was reported at the time. If the changes are only caused by reporting delays, we should see that that the number of hospitalizations reported on each date increases over time as more data becomes available. If reporting patterns are more complex than this, hospitalizations could increase or decrease over time. For example if hospitalizations can be recategorized to a different day, then the number of hospitalizations reported for a given day may decrease as well as increase over time.
 
 ```{r plot-obs-vintage, fig.height = 9}
 covid_hospitalizations |>
