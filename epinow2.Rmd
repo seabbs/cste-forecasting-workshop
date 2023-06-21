@@ -321,7 +321,7 @@ truncation_est <- covid_hospitalizations_reporting_cdf |>
     trunc_max = 7,
     chains = 4, iter = 2000,
     control = list(adapt_delta = 0.99, max_treedepth = 15),
-    verbose = FALSE
+    verbose = interactive()
   )
 
 ## Make the output a dist_spec object
@@ -412,7 +412,7 @@ syn_trunc_est <- estimate_truncation(
   trunc_max = 15,
   chains = 4, iter = 2000,
   control = list(adapt_delta = 0.99, max_treedepth = 15),
-  verbose = FALSE
+  verbose = interactive()
 )
 ```
 
@@ -590,7 +590,9 @@ rt_estimates <- estimate_infections(
     family = "poisson", week_effect = TRUE
   ),
   # We set a 14 day forecast horizon
-  horizon = 14
+  horizon = 14,
+  # Should verbose output be printed? This is useful for interactive use.
+  verbose = interactive()
 )
 ```
 

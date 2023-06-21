@@ -1872,7 +1872,7 @@ truncation_est &lt;- covid_hospitalizations_reporting_cdf |&gt;
     trunc_max = 7,
     chains = 4, iter = 2000,
     control = list(adapt_delta = 0.99, max_treedepth = 15),
-    verbose = FALSE
+    verbose = interactive()
   )
 
 ## Make the output a dist_spec object
@@ -1947,7 +1947,7 @@ synth_truncation</code></pre>
   trunc_max = 15,
   chains = 4, iter = 2000,
   control = list(adapt_delta = 0.99, max_treedepth = 15),
-  verbose = FALSE
+  verbose = interactive()
 )</code></pre>
 <p>Plotting the model predictions compared to synthetic data we can see that the model does a good job of reconstructing the data that will be observed in this synthetic example (we can see this as the earliest data points have been observed fully and so can be compared to the model predictions directly).</p>
 <pre class="r"><code>plot(syn_trunc_est)</code></pre>
@@ -2094,7 +2094,9 @@ rt_estimates &lt;- estimate_infections(
     family = &quot;poisson&quot;, week_effect = TRUE
   ),
   # We set a 14 day forecast horizon
-  horizon = 14
+  horizon = 14,
+  # Should verbose output be printed? This is useful for interactive use.
+  verbose = interactive()
 )</code></pre>
 <blockquote>
 <p>⚠ The Omicron wave was a very different to previous waves of COVID-19 and is very challenging to model due to changes in infectiousness, severity and testing. We recommend using caution when interpreting these results.</p>
