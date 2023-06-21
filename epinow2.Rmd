@@ -79,10 +79,10 @@ options(mc.cores = min(4, parallel::detectCores()))
 # Specify states of interest
 
 To start, we want to examine trends from several states. 
-Here, we focus on the data from New York, Utah, Ohio, Virginia, and North Carolina during the Omicron wave in winter 2021-2022.
+Here, we focus on the data from New York, Colorado, Ohio, Virginia, and North Carolina during the Omicron wave in winter 2021-2022.
 
 ```{r specify-states}
-states_of_interest <- c("ny", "ut", "oh", "va", "nc")
+states_of_interest <- c("ny", "co", "oh", "va", "nc")
 ```
 
 If you're interested in looking at your state or adding some different states for comparison, feel free to add an abbreviated state name to the vector above in `epinow2.Rmd`.
@@ -91,8 +91,12 @@ If you're interested in looking at your state or adding some different states fo
 
 We use the [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package to read in [HHS data](https://cmu-delphi.github.io/delphi-epidata/api/covidcast-signals/hhs.html) on confirmed Covid-19 hospital admissions. 
 The primary source for these data is the HHS state-level COVID-19 hospitalization time series, which can be found on [HealthData.gov](https://healthdata.gov/Hospital/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/g62h-syeh).
+<<<<<<< HEAD
 The [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package provides a convenient way to read in a subset of the full dataset.
 Here, we focus on the data from New York, Utah, Ohio, Virginia, and North Carolina during the Omicron wave in the winter of 2021-2022. 
+=======
+The [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package provides a convenient way to read in a subset of the full data set.
+>>>>>>> 84f26af (Swap Colorado in for Utah)
 
 We _could_ download the most recent version of this data directly. If you're interested in how to do that, check out the hidden code chunk below. It pulls the most up-to-date version of the data and stores it in a data frame called `covid_hospitalizations`.
 
