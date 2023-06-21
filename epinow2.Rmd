@@ -50,6 +50,8 @@ We also provide a [standalone HTML version](https://samabbott.co.uk/cste-forecas
 
 We first load the packages required for this tutorial. These can be installed or staged
 ```{r, eval = FALSE}
+# You may first need to install renv using
+# install.packages("renv")
 renv::restore()
 ```
 
