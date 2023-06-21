@@ -31,7 +31,7 @@ knitr::opts_chunk$set(
 # Outline
 
 - In this tutorial we make use of [EpiNow2](https://epiforecasts.io/EpiNow2/), a toolset for real-time analysis of infectious disease dynamics, for estimating reporting delays and using them to conduct a nowcast. 
-- We first explore the HSS hospitalization data and estimate the reporting delay distribution using `EpiNow2`.
+- We first explore the HHS hospitalization data and estimate the reporting delay distribution using `EpiNow2`.
 - We then draw from the literature to define a plausible incubation period and reporting delay
 - We then show how the these estimates may be used in `EpiNow2` to perform nowcasts, forecasts and estimation of reproduction numbers and growth rates. 
 - Finally, we summarize strengths and weaknesses of this approach and highlight other options and areas for future work.
@@ -117,7 +117,7 @@ This data format is equivalent to having a linelist with columns for the date of
 > &#128161; We use the terms **report date** and **vintage** to indicate the as-of date (on what date was this snapshot of the data observed). We use **event date** or simply **date** to indicate where a data point falls along the x-axis of the epidemic time series. 
 
 If you're interested in downloading the vintages from winter 2021-2022 yourself, 
-heck out the hidden code chunk below.
+check out the hidden code chunk below.
 
 > &#9888; **Don't run this command yourself if you don't have a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html) key loaded R using `options(covidcast.auth = "<your-api-key>")`**!. Instead go to the next step.
 
