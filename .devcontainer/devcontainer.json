@@ -3,7 +3,7 @@
 {
 	"name": "cste-forecasting-workshop-devcontainer",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "ghcr.io/seabbs/cste-forecasting-workshop-devcontainer:main"
+	"image": "ghcr.io/seabbs/cste-forecasting-workshop-devcontainer:main",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
