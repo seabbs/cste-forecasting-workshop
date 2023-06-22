@@ -16,25 +16,26 @@ If you have R and RStudio installed on your computer, feel free to skip ahead
 
 The set up process comes in three parts:
 
-1. Downloading the folder with the necessary code onto your machine. If this
+1. Download and install R and Rstudio [from this website](https://posit.co/download/rstudio-desktop/)
+
+2. Download the folder with the necessary code onto your machine. If this
 document is sitting in your computer in a folder called `cste-forecasting-workshop`,
-then you've successfully completed this step. If not, look for a file with a *.zip
-extension in an email. Download and unzip the folder.
-  - If you're comfortable with Git and Github, you can clone the repository
+then you've successfully completed this step.
+  - Look for a file with a *.zip extension in an email to workshop participants. Download the folder, move it to a place you'll be able to find it again, and unzip it.
+  - Alternatively, if you're comfortable with Git and Github, you can [clone the repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository?tool=desktop)
   from `seabbs/cste-forecasting-workshop`
 
-2. Download and install R and Rstudio [from this website](https://posit.co/download/rstudio-desktop/)
-
-3. Double click on the `cste-forecasting-workshop.Rproj` object in the 
+3. Navigate to the folder and double click on the `cste-forecasting-workshop.Rproj` object in the 
 `cste-forecasting-workshop` folder to open the R project associated with this
-tutorial. This should launch R and RStudio. Then, type 
-`renv::restore(prompt = FALSE)` into the open console (with the `>` symbol) to
-download all the necessary packages.
+tutorial. This should launch R and RStudio. The first time you do this, packages may begin
+installing automatically. If this happens wait until the intallation process finishes, which could take
+several minutes. If installation doesn't begin automatically, type `renv::restore(prompt = FALSE)` into the
+open console (the box with the `>` symbol) to download all the necessary packages.
 
 These steps should take around 20 minutes. Once completed, you're all set up to
-run the code in `epinow2.Rmd` as part of the workshop.
+run the code in `epinow2.Rmd` as part of the workshop. Double click this file to open it in RStudio.
 
-If you have any issues, we also have a [binder](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio) set up with all the necessary packages installed. This will take a little while to load but should allow you to run the code in `epinow2.Rmd` as part of the workshop. Note that this will not save any changes you make to the code and may be slower than running the code on your own machine.
+If you have any issues, we also have a [binder](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio) set up with all the necessary packages installed. This will take a little while to load but should allow you to run the code in `epinow2.Rmd` as part of the workshop. Note that this will not save any changes you make to the code and may be slower than running the code on your own machine. If you run into an SSL error you could try editing the address in your URL bar to http (from https) and change your browser security settings for this site. Note: do this at your own risk, and never on a state or federal government computer.
 
 # Other resources
 
