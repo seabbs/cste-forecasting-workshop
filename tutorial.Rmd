@@ -46,6 +46,8 @@ This tutorial is written in [R Markdown](https://rmarkdown.rstudio.com/) and can
 
 We also provide a [standalone HTML version](https://samabbott.co.uk/cste-forecasting-workshop/tutorial.html) of this tutorial that can be viewed in any web browser. This version is static and cannot be run interactively.
 
+You may find it useful to refer back to the slides from the workshop, which can be found [here](), as you work through the tutorial.
+
 ## Load required libraries
 
 We first load the packages required for this tutorial. These can be installed or staged
@@ -369,7 +371,7 @@ We restrict our dataset to include only what was available between the 31st of D
 Later on we will generate a nowcast for the 14th of January 2022, so we only want to use data that is relevant to this date.
 Unfortunately, this model cannot account for over-reporting and so we will first have to remove it from the data.
 
-```{r estimate_delays}
+```{r prep_to_estimate_delays}
 est_df <- covid_hospitalizations_reporting_cdf |>
   filter(state == nowcast_state) |>
   filter(date >= as.Date(time_period[1]) + 13) |>
@@ -381,7 +383,11 @@ est_df <- covid_hospitalizations_reporting_cdf |>
   # Over the new year reporting was unusually delayed.
   # This leads to problems for the model
   filter(report_date != as.Date("2022-01-05"))
+```
 
+> &#128161; The anomalous reporting delay around the new year is a good example of one of the limtitations of nowcasting we dsicussed in the slide on **Limitations** because the new year was also a critical period for the spread of Omicron. Current methods for nowcasting struggle to account for this kind of anomalously meaning that the nowcastmay be biased when it is most needed.
+
+```{r estimate_delays} 
 truncation_est <- est_df |>
   select(report_date, date, confirm) |>
   group_split(report_date) |>
@@ -445,6 +451,8 @@ Which we can then plot to see what it looks like,
 ```{r plot-synthetic-delay}
 plot(synth_truncation)
 ```
+
+Problem: Day of week effects
 
 Now we use this to generate a synthetic data set by combining it with the latest data from Ohio (as of the 14th of January 2022).
 
@@ -510,6 +518,8 @@ Plotting the model predictions compared to synthetic data we can see that the mo
 plot(syn_trunc_est)
 ```
 
+> &#128161; The black dots in this plot represent the data observed in reaal-time, whilst the bars are the latest available data. This effect is referred to as right truncation. Another example of this was shown in the slides (**Inputs needed for nowcasting**). Having the information on previous reporting patterns allows us to fit a predictive model, instead of making assumptions about the reporting delay distribution which is what we have to do when we don't have this information.
+
 Finally we can extract and plot the estimated reporting distribution,
 
 ```{r estimated-synth-delay}
@@ -529,12 +539,16 @@ As expected for this synthetic example, the estimated distribution is very simil
 ## Generation time estimate
 
 The generation time is the time between infection of an individual and infection of their infector.
-In order to estimate the effective reproduction number with the renewal equation we need an estimate of the generation time.
-With this quantity, we relate the number of infections on day $t$ to the number of infections on day $t - \tau$ where $\tau$ is the index of the generation time distribution. Mathematically this is
+In order to estimate the effective reproduction number with the **renewal equation** we need an estimate of the generation time. With this quantity, we relate the number of infections on day $t$ to the number of infections on day $t - \tau$ where $\tau$ is the index of the generation time distribution.
+Mathematically this is
 
 $$ I_t = R_t \sum_{tau = 1}^T I_{t - \tau} g(\tau), $$
 
 where $T$ is the maximum length of the generation time and $g(\tau)$ is the probability of generation time $\tau$.
+
+> &#128161; See the **Estimating Rt from a time series of counts** slide from the talk for a more visual discussion of the role of the generation time in the renewal equation.
+
+
 Rather than estimating the generation time here, we instead use an estimate from the literature. 
 Specifically we use an estimate from [Ganyani et al. (2020)](https://doi.org/10.2807%2F1560-7917.ES.2020.25.17.2000257) which is based on a few hundred cases of COVID-19 in China.
 For a real-world analysis we recommend thinking carefully about which generation time distribution to use. 
@@ -714,6 +728,8 @@ This is useful as it allows us to get a sense for the number of infections after
 plot(rt_estimates, type = "infections")
 ```
 
+> &#128161; As this plot is by date of infection we can use it to get a better sense of how the epidemic has changed over time. This could be useful if we were looking at the role of interventions as discussed in the slides (**Estimates must be accurate, timely, and account for uncertainty**) where it is critical link intervention timing to changes in the epidemic.
+
 ## Predicted hospitalizations
 
 Another useful plot is the predicted hospitalisations. This can be obtained using the `plot_estimates()` function. This function takes a data frame of estimates and a data frame of reported cases and plots the estimates alongside the reported cases. 
@@ -730,6 +746,8 @@ rt_estimates |>
 ```
 
 We see that the forecast performs relatively well when compared to more recent data.
+
+> &#128161; You should be able to see that the model can capture the day-of-the-week periodicity in the data that we discussed in the slides (**Problem: Day of week effects**). This is important as it makes us less likely to overestimate the reproduction number on weekends and underestimate it on weekdays, for example.
 
 # Summary
 
