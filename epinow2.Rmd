@@ -31,7 +31,7 @@ knitr::opts_chunk$set(
 # Outline
 
 - In this tutorial we make use of [EpiNow2](https://epiforecasts.io/EpiNow2/), a toolset for real-time analysis of infectious disease dynamics, for estimating reporting delays and using them to conduct a nowcast. 
-- We first explore the HSS hospitalization data and estimate the reporting delay distribution using `EpiNow2`.
+- We first explore the HHS hospitalization data and estimate the reporting delay distribution using `EpiNow2`.
 - We then draw from the literature to define a plausible incubation period and reporting delay
 - We then show how the these estimates may be used in `EpiNow2` to perform nowcasts, forecasts and estimation of reproduction numbers and growth rates. 
 - Finally, we summarize strengths and weaknesses of this approach and highlight other options and areas for future work.
@@ -62,7 +62,7 @@ library("dplyr") # for manipulating data
 library("ggplot2") # for plotting data
 library("tidyr") # for manipulating data
 library("purrr") # for manipulating data
-library("covidcast") # for downlooading HHC hospitalization data
+library("covidcast") # for downlooading HHS hospitalization data
 library("here") # for file paths
 ```
 
@@ -85,18 +85,18 @@ Here, we focus on the data from New York, Utah, Ohio, Virginia, and North Caroli
 states_of_interest <- c("ny", "ut", "oh", "va", "nc")
 ```
 
-If you're interested in looking at your state or adding some different states
-for comparison, feel free to add an abbreviated state name to the vector above
-in `epinow2.Rmd`.
+If you're interested in looking at your state or adding some different states for comparison, feel free to add an abbreviated state name to the vector above in `epinow2.Rmd`.
 
 # Load the data
 
 We use the [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package to read in [HHS data](https://cmu-delphi.github.io/delphi-epidata/api/covidcast-signals/hhs.html) on confirmed Covid-19 hospital admissions. 
 The primary source for these data is the HHS state-level COVID-19 hospitalization time series, which can be found on [HealthData.gov](https://healthdata.gov/Hospital/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/g62h-syeh).
-The [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package provides a convenient way to read in a subset of the full data set.
+The [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package provides a convenient way to read in a subset of the full dataset.
 Here, we focus on the data from New York, Utah, Ohio, Virginia, and North Carolina during the Omicron wave in the winter of 2021-2022. 
 
-We _could_ download the most recent version of this data directly using:
+We _could_ download the most recent version of this data directly. If you're interested in how to do that, check out the hidden code chunk below. It pulls the most up-to-date version of the data and stores it in a data frame called `covid_hospitalizations`.
+
+> &#9888; **Don't run this command yourself if you don't have a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html) key loaded into R using `options(covidcast.auth = "<your-api-key>")`**!. Instead go to the next step.
 
 ```{r, eval = FALSE, class.source = "fold-hide"}
 covid_hospitalizations <- covidcast_signal(
@@ -113,16 +113,13 @@ covid_hospitalizations <- covidcast_signal(
       rename(state = geo_value, date = time_value, confirm = value)
 ```
 
-The above command pulls the most up-to-date version of the data and stores it in a data frame called `covid_hospitalizations`.
-
-But when evaluating methods, we're often interested in how they would have performed
-on the data available at the time rather than the data in its final, fully-reported state.
-This data format is equivalent to having a linelist with columns for the date of hospitalization and the date of report.
+When evaluating methods, we're often interested in how they would have performed on the data available at the time rather than the data in its final, fully-reported state. This data format is equivalent to having a linelist with columns for the date of hospitalization and the date of report.
 
 > &#128161; We use the terms **report date** and **vintage** to indicate the as-of date (on what date was this snapshot of the data observed). We use **event date** or simply **date** to indicate where a data point falls along the x-axis of the epidemic time series. 
 
-> &#9888; **Don't run this command yourself if you don't have a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html) key loaded**!. Instead go to the next step.
+If you're interested in downloading the vintages from winter 2021-2022 yourself, check out the hidden code chunk below.
 
+> &#9888; **Don't run this command yourself if you don't have a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html) key loaded R using `options(covidcast.auth = "<your-api-key>")`**!. Instead go to the next step.
 
 ```{r, eval = FALSE, class.source = "fold-hide"}
 # Define a range of as-of dates
@@ -149,8 +146,6 @@ covid_hospitalizations_by_vintage <- as_of_dates |>
   )) |>
   as_tibble()
 ```
-
-If you would like to run this command yourself, you can do so by removing the `eval = FALSE` from the above chunk after registering for a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html) and loading it into R using `options(covidcast.auth = "<your-api-key>")`.
 
 Rather make everyone get an API key and query the `covidcast` API themselves, we instead use the data we have already downloaded.
 
@@ -189,9 +184,7 @@ if (!all(states_of_interest %in% covid_hospitalizations$state) ||
 
 ## Visualize hospitalizations
 
-We start by visualizing the currently reported hospitalizations for this time period.
-We're treating these reports as finalized because its unlikely there will be
-substantial revisions in hospitalizations from so long ago.
+We start by visualizing the currently reported hospitalizations for this time period. We're treating these reports as finalized because it's unlikely there will be substantial revisions for hospitalizations from so long ago.
 
 ```{r plot-obs, fig.height = 9}
 covid_hospitalizations |>
@@ -200,20 +193,20 @@ covid_hospitalizations |>
   geom_col(alpha = 0.6) +
   theme_bw() +
   labs(
-    x = "date of hospitalization",
-    y = "incident hospitalizations",
-    title = "hospitalizations in select sates for the winter 2021-2022 wave"
+    x = "Date of hospitalization",
+    y = "Incident hospitalizations",
+    title = "Hospitalizations in select states for the winter 2021-2022 wave"
   ) +
   facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
 
-As expected we see a large increase in hospitalisations in all states during the winter 2021-2022 wave. However, we can also see that there is a large amount of variation in the number of hospitalisations reported on each date and state by state. 
+As expected we see a large increase in hospitalizations in all states during the winter 2021-2022 wave. However, we can also see that there is a large amount of variation in the number of hospitalizations reported on each date and state by state. 
 
 ## Visualise hosptialisations by date of report
 
-Whilst it is interesting to look back retrospectively when analysing data it is important to remember that the data we have now is not the same as the data that was available at the time. This can occurr for a number of reasons, for example, there may be a delay between the date of hospitalisation and the date of report or there may be changes in how hospitalisations are measured which leads to a retrospective change in the number of hospitalisations.
+While it is interesting to look back retrospectively, it is important to remember that the data we have now is not the same as the data that was available at the time. This can occur for a number of reasons; for example, there may be a delay between the date of hospitalization and the date of report or there may be changes in how hospitalizations are measured which leads to a retrospective change in the number of hospitalizations.
 
-To begin to unpick this we can look at the number of hospitalisations as it was reported. We should see that that the number of hospitalisations reported on each date increases over time as more data becomes available if the changes are caused only by delays. If reporting is more complex than this, for example, if hospitalisations can be recategorised to a different day then the number of hospitalisations reported for a given day may decrease as well as increase over time.
+To begin to unpack these changes we can look at the number of hospitalizations as it was reported at the time. If the changes are only caused by reporting delays, we should see that that the number of hospitalizations reported on each date increases over time as more data becomes available. If reporting patterns are more complex than this, hospitalizations could increase or decrease over time. For example if hospitalizations can be recategorized to a different day, then the number of hospitalizations reported for a given day may decrease as well as increase over time.
 
 ```{r plot-obs-vintage, fig.height = 9}
 covid_hospitalizations |>
@@ -237,16 +230,19 @@ covid_hospitalizations |>
   facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
 
-You should be able to see here that the data as observed in real time is right truncated, meaning that observations at the end of the time series are incomplete or subject to revision.
+You can see in this plot that the data as observed in real time is right-truncated, meaning that observations at the end of the time series are incomplete or subject to revision.
 (The light blue line and points represent final counts. The short darker lines represent preliminary counts that will later be revised.)
 In most epidemiological data, delays in reporting lead to a temporary undercount of what will eventually be reported. 
-If left uncorrected when using real-time data sets, this truncation can lead to underestimation of the effective reproduction number, inaccurate forecasts, and potentially mislead reports policy makers using these metrics.
+If left uncorrected when using real-time data sets, this truncation can lead to underestimation of the effective reproduction number, inaccurate forecasts, and potentially mislead reports to policy makers using these metrics.
 
-However, it appears that hospitalisations are also very commonly corrected down, this indicates a more complex reporting mechanism is at play. Unfortunately, currently currently there are few available methods that can address this kind of reporting structure and the development of new ones is likely dependent on the interaction between those collecting the data and those developing new methods.
+However, in this dataset it appears that hospitalizations are also very commonly corrected down.
+This pattern indicates that there is a more complex reporting mechanism at play.
+Unfortunately, there are currently few available methods that can address this kind of reporting structure.
+The development of new methods to interpret these patterns will likely depend on the interaction between those collecting the data and those developing new methods.
 
 ## Visualize the reporting delay
 
-We can also plot the distribution of reporting delays to look at how much delay is normal. 
+We can also plot the distribution of reporting delays to look at how much delay is typical. 
 For this plot, we calculate the delay between the date of hospitalization and the date of report for each hospitalization.
 
 ```{r plot-delay, fig.height = 9}
@@ -305,8 +301,9 @@ if (!(nowcast_state %in% states_of_interest)) {
 
 We use `EpiNow2` to estimate the distribution of reporting delays for Ohio. 
 The model in `EpiNow2` allow us to correct for right truncation in the data when we estimate the reproduction number. 
-We restrict our data to data available between the 31st of December 2021 and the 14th of January 2022 as later we will nowcast for the 14th of January 2022 and so we want to use data that is relevant to this date.
-Unfortunately, this model cannot account for over-reporting and so we will first have to remove this from the data.
+We restrict our dataset to include only what was available between the 31st of December 2021 and the 14th of January 2022.
+Later on we will generate a nowcast for the 14th of January 2022, so we only want to use data that is relevant to this date.
+Unfortunately, this model cannot account for over-reporting and so we will first have to remove it from the data.
 
 ```{r estimate_delays}
 truncation_est <- covid_hospitalizations_reporting_cdf |>
