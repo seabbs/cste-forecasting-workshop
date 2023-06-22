@@ -451,9 +451,9 @@ The generation time is the time between infection of an individual and infection
 In order to estimate the effective reproduction number with the renewal equation we need an estimate of the generation time.
 With this quantity, we relate the number of infections on day $t$ to the number of infections on day $t - \tau$ where $\tau$ is the index of the generation time distribution. Mathematically this is
 
-$$ I_t = R_t \sum_{tau = 1}^T I_{t - \tau} G(\tau), $$
+$$ I_t = R_t \sum_{tau = 1}^T I_{t - \tau} g(\tau), $$
 
-where $T$ is the maximum length of the generation time. 
+where $T$ is the maximum length of the generation time and $g(\tau)$ is the probability of generation time $\tau$.
 Rather than estimating the generation time here, we instead use an estimate from the literature. 
 Specifically we use an estimate from [Ganyani et al. (2020)](https://doi.org/10.2807%2F1560-7917.ES.2020.25.17.2000257) which is based on a few hundred cases of COVID-19 in China.
 For a real-world analysis we recommend thinking carefully about which generation time distribution to use. 
