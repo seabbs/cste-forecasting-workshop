@@ -14,7 +14,7 @@ If you have R and RStudio installed on your computer, feel free to skip ahead
 
 # What is in this repository?
 
-- [**tutorial.Rmd**]: This is the tutorial itself. It is written in
+- **tutorial.Rmd**: This is the tutorial itself. It is written in
   `Rmarkdown` and can be opened in RStudio. It contains all the code and
   explanations for the tutorial.
 - [**tutorial.html**](https://samabbott.co.uk/cste-forecasting-workshop/tutorial.html): This is the
