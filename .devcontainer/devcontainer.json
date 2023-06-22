@@ -1,9 +1,9 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/rocker-org/devcontainer-templates/tree/main/src/r-ver
 {
-	"name": "R (rocker/r-ver base)",
+	"name": "cste-forecasting-workshop-devcontainer",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "ghcr.io/rocker-org/devcontainer/tidyverse:4.3",
+	"image": "ghcr.io/seabbs/cste-forecasting-workshop-devcontainer:main",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
