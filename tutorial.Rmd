@@ -46,7 +46,7 @@ This tutorial is written in [R Markdown](https://rmarkdown.rstudio.com/) and can
 
 We also provide a [standalone HTML version](https://samabbott.co.uk/cste-forecasting-workshop/tutorial.html) of this tutorial that can be viewed in any web browser. This version is static and cannot be run interactively.
 
-You may find it useful to refer back to the slides from the workshop, which can be found [here](), as you work through the tutorial.
+You may find it useful to refer back to the slides from the workshop as you work through the tutorial.
 
 ## Load required libraries
 
