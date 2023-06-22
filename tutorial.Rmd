@@ -60,6 +60,7 @@ renv::restore()
 library("EpiNow2") # for estimating reporting delays and nowcasting
 library("dplyr") # for manipulating data
 library("ggplot2") # for plotting data
+library("knitr") # for displaying data
 library("tidyr") # for manipulating data
 library("purrr") # for manipulating data
 library("covidcast") # for downlooading HHS hospitalization data
@@ -91,12 +92,7 @@ If you're interested in looking at your state or adding some different states fo
 
 We use the [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package to read in [HHS data](https://cmu-delphi.github.io/delphi-epidata/api/covidcast-signals/hhs.html) on confirmed Covid-19 hospital admissions. 
 The primary source for these data is the HHS state-level COVID-19 hospitalization time series, which can be found on [HealthData.gov](https://healthdata.gov/Hospital/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/g62h-syeh).
-<<<<<<< HEAD
-The [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package provides a convenient way to read in a subset of the full dataset.
-Here, we focus on the data from New York, Utah, Ohio, Virginia, and North Carolina during the Omicron wave in the winter of 2021-2022. 
-=======
 The [covidcast](https://cmu-delphi.github.io/covidcast/covidcastR/) package provides a convenient way to read in a subset of the full data set.
->>>>>>> 84f26af (Swap Colorado in for Utah)
 
 We _could_ download the most recent version of this data directly. If you're interested in how to do that, check out the hidden code chunk below. It pulls the most up-to-date version of the data and stores it in a data frame called `covid_hospitalizations`.
 
@@ -605,7 +601,14 @@ rt_estimates <- estimate_infections(
 
 # Visualising the resulting nowcast
 
-## A simple Summary
+## A simple summary table
+
+We can use the `summary()` function to obtain a simple summary table of the nowcast and forecast. This can be useful for quickly checking the results of the model and for sharing with others.
+
+```{r summary-table}
+summary(rt_estimates) |>
+  kable()
+```
 
 ## Effective reproduction number estimates
 
