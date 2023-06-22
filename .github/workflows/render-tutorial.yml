@@ -20,7 +20,7 @@ jobs:
         with:
           r-version: 'renv'
       - uses: r-lib/actions/setup-renv@v2
-
+  
       - name: Cache across tutorial builds
         uses: actions/cache@v3
         with:
@@ -28,7 +28,7 @@ jobs:
             tutorial_cache
             tutorial_files
           key: cache
-
+  
       - name: Render the README
         run: |
           rmarkdown::render(
@@ -36,19 +36,22 @@ jobs:
             output_file = "index.html"
           )
         shell: Rscript {0}
-
+  
       - name: Render the tutorial
         run: |
           rmarkdown::render("tutorial.Rmd")
         shell: Rscript {0}
+  
+      - name: Move files to new folder
+        run: |
+          mkdir rendered_docs
+          mv index.html tutorial.html rendered_docs/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
           retention-days: 5
-          path: |
-            index.html
-            tutorial.html
+          path: rendered_docs
 
   deploy-tutorial:
     if: github.event_name != 'pull_request'
