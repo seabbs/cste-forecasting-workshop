@@ -33,7 +33,7 @@ jobs:
       - name: Render the README
         run: |
           rmarkdown::render(
-            "REAMDE.md", output_format = "html_document",
+            "README.md", output_format = "html_document",
             output_file = "index.html"
           )
         shell: Rscript {0}
