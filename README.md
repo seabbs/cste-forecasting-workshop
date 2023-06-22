@@ -10,7 +10,7 @@ It can take a little time for your computer to install the necessary packages (a
 If you've never used R before, follow the detailed instructions below for a
 step-by-step guide to get set up.
 If you have R and RStudio installed on your computer, feel free to skip ahead
-[to the tutorial](https://samabbott.co.uk/cste-forecasting-workshop/epinow2.html).
+[to the tutorial](https://samabbott.co.uk/cste-forecasting-workshop/tutorial.html).
 
 # Getting set up
 
@@ -32,9 +32,9 @@ tutorial. This should launch R and RStudio. Then, type
 download all the necessary packages.
 
 These steps should take around 20 minutes. Once completed, you're all set up to
-run the code in `epinow2.Rmd` as part of the workshop.
+run the code in `tutorial.Rmd` as part of the workshop.
 
-If you have any issues, we also have a [binder](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio) set up with all the necessary packages installed. This will take a little while to load but should allow you to run the code in `epinow2.Rmd` as part of the workshop. Note that this will not save any changes you make to the code and may be slower than running the code on your own machine.
+If you have any issues, we also have a [binder](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio) set up with all the necessary packages installed. This will take a little while to load but should allow you to run the code in `tutorial.Rmd` as part of the workshop. Note that this will not save any changes you make to the code and may be slower than running the code on your own machine.
 
 # Other resources
 

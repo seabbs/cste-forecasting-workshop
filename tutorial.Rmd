@@ -42,9 +42,9 @@ For more about the `EpiNow2` package see the [the package documentation](https:/
 
 ## Using this tutorial
 
-This tutorial is written in [R Markdown](https://rmarkdown.rstudio.com/) and can be run in [RStudio](https://www.rstudio.com/). See the `epinow2.Rmd` file for the code used to generate this tutorial, this is also the best place to start if you want to work through the tutorial yourself.
+This tutorial is written in [R Markdown](https://rmarkdown.rstudio.com/) and can be run in [RStudio](https://www.rstudio.com/). See the `tutorial.Rmd` file for the code used to generate this tutorial, this is also the best place to start if you want to work through the tutorial yourself.
 
-We also provide a [standalone HTML version](https://samabbott.co.uk/cste-forecasting-workshop/epinow2.html) of this tutorial that can be viewed in any web browser. This version is static and cannot be run interactively.
+We also provide a [standalone HTML version](https://samabbott.co.uk/cste-forecasting-workshop/tutorial.html) of this tutorial that can be viewed in any web browser. This version is static and cannot be run interactively.
 
 ## Load required libraries
 
@@ -85,7 +85,7 @@ Here, we focus on the data from New York, Colorado, Ohio, Virginia, and North Ca
 states_of_interest <- c("ny", "co", "oh", "va", "nc")
 ```
 
-If you're interested in looking at your state or adding some different states for comparison, feel free to add an abbreviated state name to the vector above in `epinow2.Rmd`.
+If you're interested in looking at your state or adding some different states for comparison, feel free to add an abbreviated state name to the vector above in `tutorial.Rmd`.
 
 # Load the data
 
