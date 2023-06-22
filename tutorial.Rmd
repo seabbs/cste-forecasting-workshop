@@ -385,7 +385,7 @@ est_df <- covid_hospitalizations_reporting_cdf |>
   filter(report_date != as.Date("2022-01-05"))
 ```
 
-> &#128161; The anomalous reporting delay around the new year is a good example of one of the limtitations of nowcasting we discussed in the slide on **Limitations** because the new year was also a critical period for the spread of Omicron. Current methods for nowcasting struggle to account for this kind of anomalously meaning that the nowcastmay be biased when it is most needed.
+> &#128161; The anomalous reporting delay around the new year is a good example of one of the limtitations of nowcasting we discussed in the slide on **Limitations** because the new year was also a critical period for the spread of Omicron. Current methods for nowcasting struggle to account for this kind of anomalously meaning that the nowcast may be biased when it is most needed.
 
 ```{r estimate_delays} 
 truncation_est <- est_df |>
