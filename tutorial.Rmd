@@ -272,14 +272,15 @@ covid_hospitalizations |>
   facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
 
-You can see in this plot that the data as observed in real time is right-truncated, meaning that observations at the end of the time series are incomplete or subject to revision.
+You can see in this plot that the data as observed in real time is sometimes right-truncated, meaning that observations at the end of the time series are incomplete or subject to revision.
 (The light blue line and points represent final counts. The short darker lines represent preliminary counts that will later be revised.)
 In most epidemiological data, delays in reporting lead to a temporary undercount of what will eventually be reported. 
 If left uncorrected when using real-time data sets, this truncation can lead to underestimation of the effective reproduction number, inaccurate forecasts, and potentially mislead reports to policy makers using these metrics.
 
 However, in this dataset it appears that hospitalizations are also very commonly corrected down.
 This pattern indicates that there is a more complex reporting mechanism at play.
-Unfortunately, there are currently few available methods that can address this kind of reporting structure.
+One potential mechanism for this is that it appears that the value for the previous day is often used as a stand-in for the most recent data.
+This issue is relatively easy to correct for once it has been identified but other mechanism that lead to counts being corrected down are more difficult to account for with currently available methods.
 The development of new methods to interpret these patterns will likely depend on the interaction between those collecting the data and those developing new methods.
 
 ## Visualize the reporting delay
@@ -321,6 +322,8 @@ covid_hospitalizations_reporting_cdf |>
   ) +
   facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
+
+We see that the reporting delay is somewhat unstable with a large amount of under/over reporting on the first report date and then very little change after that. This suggests that the reporting delay is not a simple delay but rather a more complex process. One major factor is likely the, previously noted, data procesing practice of using the last value carried forward for the most recent date. This is the kind of assumption that needs to be carefully communicated to those using the data as it can lead to misinterpretation of the data as well as impacting nowcasts based on the data.
 
 # Choosing a state and target date to nowcast
 
