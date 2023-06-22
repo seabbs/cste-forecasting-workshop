@@ -31,6 +31,15 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup Pages
         uses: actions/configure-pages@v3
+      - name: Download tutorial artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: tutorial 
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload entire repository
+          path: 'tutorial'
       - name: Deploy to GitHub Pages
-        id: tutorial
+        id: deployment
         uses: actions/deploy-pages@v2
