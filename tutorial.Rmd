@@ -80,13 +80,22 @@ options(mc.cores = min(4, parallel::detectCores()))
 # Specify states of interest
 
 To start, we want to examine trends from several states. 
-Here, we focus on the data from New York, Colorado, Ohio, Virginia, and North Carolina during the Omicron wave in winter 2021-2022.
+Here, we focus on the data from New York, Colorado, Ohio, Virginia, and North Carolina.
 
 ```{r specify-states}
 states_of_interest <- c("ny", "co", "oh", "va", "nc")
 ```
 
 If you're interested in looking at your state or adding some different states for comparison, feel free to add an abbreviated state name to the vector above in `tutorial.Rmd`.
+
+# Specify the time period of interest
+
+We will focus on the period from the 1st of December 2021 to January 1, 2022 in this tutorial. In this period, the Omicron variant led to a large increase in cases in the US. It was a particular challenging time to model due to Omicron's increase in transmissibility, it's ability to evade immunity, changes in the infection to hospitalization ratio, and the holiday season.
+
+```{r specify-time-period}
+time_period <- c("2021-12-01", "2022-02-01")
+```
+
 
 # Load the data
 
@@ -99,11 +108,18 @@ We _could_ download the most recent version of this data directly. If you're int
 > &#9888; **Don't run this command yourself if you don't have a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html) key loaded into R using `options(covidcast.auth = "<your-api-key>")`**!. Instead go to the next step.
 
 ```{r, eval = FALSE, class.source = "fold-hide"}
+# Add 28 days to the end of the time period to ensure we have all the data
+# we need
+end_period <- as.Date(time_period[2]) + 28
+
+# Define a range of as-of dates
+as_of_dates <- seq(as.Date(time_period[1]), end_date, by = "day")
+
 covid_hospitalizations <- covidcast_signal(
       data_source = "hhs",
       signal = "confirmed_admissions_covid_1d",
-      start_day = "2021-12-01",
-      end_day = "2022-02-01",
+      start_day = time_period[1],
+      end_day = end_period,
       geo_type = "state",
       geo_value = states_of_interest
     ) |>
@@ -111,19 +127,26 @@ covid_hospitalizations <- covidcast_signal(
       filter(issue == max(issue)) |>
       select(geo_value, time_value, value) |>
       rename(state = geo_value, date = time_value, confirm = value)
+
+# Save the data as a .rds file in the project folder
+saveRDS(covid_hospitalizations, here("data", "covid_hospitalizations.rds"))
 ```
 
 When evaluating methods, we're often interested in how they would have performed on the data available at the time rather than the data in its final, fully-reported state. This data format is equivalent to having a linelist with columns for the date of hospitalization and the date of report.
 
 > &#128161; We use the terms **report date** and **vintage** to indicate the as-of date (on what date was this snapshot of the data observed). We use **event date** or simply **date** to indicate where a data point falls along the x-axis of the epidemic time series. 
 
-If you're interested in downloading the vintages from winter 2021-2022 yourself, check out the hidden code chunk below.
+If you're interested in downloading the vintages from winter 2021-2022 yourself, check out the hidden code chunk below (once you've done this you'll be able to rerender the tutorial using your updated data if you wish).
 
 > &#9888; **Don't run this command yourself if you don't have a [`covidcast` API key](https://cmu-delphi.github.io/covidcast/covidcastR/reference/covidcast_signal.html) key loaded R using `options(covidcast.auth = "<your-api-key>")`**!. Instead go to the next step.
 
 ```{r, eval = FALSE, class.source = "fold-hide"}
+# Add 28 days to the end of the time period to ensure we have all the data
+# we need
+end_period <- as.Date(time_period[2]) + 28
+
 # Define a range of as-of dates
-as_of_dates <- seq(as.Date("2021-12-03"), as.Date("2022-03-01"), by = "day")
+as_of_dates <- seq(as.Date(time_period[1]), end_date, by = "day")
 
 # Read in the data for each as-of date
 covid_hospitalizations_by_vintage <- as_of_dates |>
@@ -131,8 +154,8 @@ covid_hospitalizations_by_vintage <- as_of_dates |>
     covidcast_signal(
       data_source = "hhs",
       signal = "confirmed_admissions_covid_1d",
-      start_day = "2021-12-01",
-      end_day = "2022-02-01",
+      start_day = time_period[1],
+      end_day = end_date,
       as_of = x,
       geo_type = "state",
       geo_value = states_of_interest
@@ -145,6 +168,12 @@ covid_hospitalizations_by_vintage <- as_of_dates |>
       arrange(date, report_date)
   )) |>
   as_tibble()
+
+# Save the data as a .rds file in the project folder
+saveRDS(
+  covid_hospitalizations_by_vintage,
+  here("data", "covid_hospitalizations_by_vintage.rds")
+)
 ```
 
 Rather make everyone get an API key and query the `covidcast` API themselves, we instead use the data we have already downloaded.
@@ -175,6 +204,19 @@ if (!all(states_of_interest %in% covid_hospitalizations$state) ||
   stop(
     "Not all states of interest are present in the data. ",
     "You may need to update the `states_of_interest` variable or ",
+    "download the data again using the code in the previous chunks."
+  )
+}
+```
+
+We also check that it covers the time period we're interested in.
+
+```{r, class.source = "fold-hide"}
+dates <- unique(covid_hospitalizations$date)
+if (!all(map_lgl(time_period, \(x)(any(dates %in% x))))) {
+  stop(
+    "The data does not cover the time period of interest. ",
+    "You may need to update the `time_period` variable or ",
     "download the data again using the code in the previous chunks."
   )
 }
@@ -248,7 +290,7 @@ For this plot, we calculate the delay between the date of hospitalization and th
 ```{r plot-delay, fig.height = 9}
 covid_hospitalizations_reporting_cdf <-
   covid_hospitalizations_by_vintage |>
-  filter(date >= as.Date("2021-12-01")) |>
+  filter(date >= as.Date(time_period[1])) |>
   group_by(date, state) |>
   group_modify(
     ~ mutate(.x,
@@ -297,6 +339,15 @@ if (!(nowcast_state %in% states_of_interest)) {
 
 # Estimating the reporting delay
 
+
+## Define a target date of interest
+
+We first define a target date of interest. Here we use the 14th of January 2022, but you can change this to any date between the 31st of December 2021 and the 14th of January 2022 (or other dates if you have updated the `time_period` variable and the data snapshot).
+
+```{r}
+target_date <- as.Date("2022-01-14")
+```
+
 ## Using recorded data vintages for Ohio
 
 We use `EpiNow2` to estimate the distribution of reporting delays for Ohio. 
@@ -308,9 +359,9 @@ Unfortunately, this model cannot account for over-reporting and so we will first
 ```{r estimate_delays}
 truncation_est <- covid_hospitalizations_reporting_cdf |>
   filter(state == nowcast_state) |>
-  filter(date >= as.Date("2021-12-14")) |>
-  filter(report_date >= as.Date("2021-12-31")) |>
-  filter(report_date <= as.Date("2022-01-14")) |>
+  filter(date >= as.Date(time_period[1]) + 13) |>
+  filter(report_date >= target_date - 14) |>
+  filter(report_date <= target_date) |>
   group_by(date) |>
   mutate(confirm = max(confirm, dplyr::lag(confirm, default = 0))) |>
   ungroup() |>
@@ -537,18 +588,18 @@ Now we have all the components we need to construct a nowcast. First we construc
 ```{r}
 oh_hosp_14th <- covid_hospitalizations_by_vintage |>
   filter(state == nowcast_state) |>
-  filter(report_date == as.Date("2022-01-14")) |>
+  filter(report_date == target_date) |>
   select(date, confirm)
 
 glimpse(oh_hosp_14th)
 ```
 
-In order to evaluate our model we will use the most recently reported data up to the 28th of January 2022 (as we are forecasting for a week).
+In order to evaluate our model we will use the most recently reported data up to the 28th of January 2022 (as we are forecasting for two weeks).
 
 ```{r}
 oh_hosp_28th_retro <- covid_hospitalizations |>
   filter(state == nowcast_state) |>
-  filter(date <= as.Date("2022-01-28")) |>
+  filter(date <= target_date + 14) |>
   select(date, confirm)
 ```
 
