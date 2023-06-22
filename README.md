@@ -12,6 +12,17 @@ step-by-step guide to get set up.
 If you have R and RStudio installed on your computer, feel free to skip ahead
 [to the tutorial](https://samabbott.co.uk/cste-forecasting-workshop/tutorial.html).
 
+# What is in this repository?
+
+- [**tutorial.Rmd**](tutorial.Rmd): This is the tutorial itself. It is written in
+  `Rmarkdown` and can be opened in RStudio. It contains all the code and
+  explanations for the tutorial.
+- [**tutorial.html**](https://samabbott.co.uk/cste-forecasting-workshop/tutorial.html): This is the
+ tutorial in html format. It is best viewed in a browser. For most users this is **the best place to start**.
+- **All the rest**: These are the files that are necessary to run the tutorial. You
+  don't need to worry about them unless you want to explore the code in more
+  detail.
+
 # Getting set up
 
 The set up process comes in three parts:
