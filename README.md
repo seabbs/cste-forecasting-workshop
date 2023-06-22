@@ -42,6 +42,7 @@ If you have any issues, we also have a [binder](https://mybinder.org/v2/gh/seabb
 - [CDC Mpox Technical reports](https://www.cdc.gov/poxvirus/mpox/cases-data/technical-report.html): For a recent example of `EpiNow2` in use, see the CDC's technical reports on Mpox. These reports use `EpiNow2` to estimate the effective reproduction number and forecast future cases.
 - [Reflections on two years estimating the effective reproduction number](https://epiforecasts.io/posts/2022-03-25-rt-reflections/index.html): This blog post reflects on the development of `EpiNow2` and the challenges of estimating the effective reproduction number in real-time at scale.
 - [nowcasting example](https://github.com/epiforecasts/nowcasting.example): This is a repository that uses simulated data to demonstrate how to nowcast using both `EpiNow2` and `EpiNowcast`.
+- [Tutorial Q and A](https://github.com/seabbs/cste-forecasting-workshop/discussions/categories/q-a): If you have any questions about the tutorial, please post them here. We will try to answer them as quickly as possible.
 
 **Other packages**
 
