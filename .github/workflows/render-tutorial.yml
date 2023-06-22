@@ -42,11 +42,26 @@ jobs:
           rmarkdown::render("tutorial.Rmd")
         shell: Rscript {0}
 
-      - name: Upload tutorial
-        uses: actions/upload-artifact@v2
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
         with:
-          name: tutorial
           retention-days: 5
           path: |
             index.html
             tutorial.html
+
+  deploy-tutorial:
+    if: github.event_name != 'pull_request'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: render-tutorial
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
