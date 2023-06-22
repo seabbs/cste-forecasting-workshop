@@ -1,4 +1,4 @@
-FROM ghcr.io/rocker-org/devcontainer/tidyverse:4.3.0
+FROM ghcr.io/rocker-org/devcontainer/tidyverse:4
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
