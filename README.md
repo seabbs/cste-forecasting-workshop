@@ -36,6 +36,10 @@ run the code in `tutorial.Rmd` as part of the workshop.
 
 If you have any issues, we also have a [binder](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio) set up with all the necessary packages installed. This will take a little while to load but should allow you to run the code in `tutorial.Rmd` as part of the workshop. Note that this will not save any changes you make to the code and may be slower than running the code on your own machine. If you run into an SSL error you may need to change the link to `http` in the URL bar and allow change your browser settings to allow unsafe sites.
 
+# Other resources
+
+If you are interested in finding additional resources for estimating the effective reproduction number or learning about nowcasting in R, explore the following:
+
 **`EpiNow2` resources**
 
 - [Documentation](https://epiforecasts.io/EpiNow2/dev): The documentation for the `EpiNow2` package. This is the package we will be using in this tutorial. It is designed to be easy to use, robust to a wide range of contexts, and flexible.
