@@ -6,4 +6,7 @@ RUN apt-get update && \
     libcurl4-openssl-dev \
     libxml2-dev
 
+COPY renv renv
+COPY renv.lock renv.lock
+
 RUN Rscript -e 'renv::restore()'
