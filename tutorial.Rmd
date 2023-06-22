@@ -518,7 +518,7 @@ Plotting the model predictions compared to synthetic data we can see that the mo
 plot(syn_trunc_est)
 ```
 
-> &#128161; The black dots in this plot represent the data observed in reaal-time, whilst the bars are the latest available data. This effect is referred to as right truncation. Another example of this was shown in the slides (**Inputs needed for nowcasting**). Having the information on previous reporting patterns allows us to fit a predictive model, instead of making assumptions about the reporting delay distribution which is what we have to do when we don't have this information.
+> &#128161; The black dots in this plot represent the data observed in real-time, whilst the bars are the latest available data. This effect is referred to as right truncation. Another example of this was shown in the slides (**Inputs needed for nowcasting**). Having the information on previous reporting patterns allows us to fit a predictive model, instead of making assumptions about the reporting delay distribution which is what we have to do when we don't have this information.
 
 Finally we can extract and plot the estimated reporting distribution,
 
