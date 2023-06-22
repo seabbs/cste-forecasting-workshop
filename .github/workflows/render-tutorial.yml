@@ -1,3 +1,4 @@
+name: Render tutorial
 on:
   push:
     branches:
@@ -6,8 +7,6 @@ on:
     branches:
       - '*'
   workflow_dispatch:
-
-name: render-tutorial
 
 jobs:
   render-tutorial:
@@ -51,16 +50,3 @@ jobs:
           path: |
             index.html
             tutorial.html
-
-  publish-tutorial:
-    if: github.ref == 'refs/heads/main' && github.repository == 'seabbs/cste-forecasting-workshop'
-    needs: render-tutorial
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-    steps:
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      - name: Deploy to GitHub Pages
-        id: tutorial
-        uses: actions/deploy-pages@v2
