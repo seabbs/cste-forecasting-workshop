@@ -728,7 +728,7 @@ This is useful as it allows us to get a sense for the number of infections after
 plot(rt_estimates, type = "infections")
 ```
 
-> &#128161; As this plot is by date of infection we can use it to get a better sense of how the epidemic has changed over time. This could be useful if we were looking at the role of interventions as discussed in the slides (**Estimates must be accurate, timely, and account for uncertainty**) where it is critical link intervention timing to changes in the epidemic.
+> &#128161; As this plot is by date of infection we can use it to get a better sense of how the epidemic has changed over time. This could be useful if we were looking at the role of interventions as discussed in the slides (**Estimates must be accurate, timely, and account for uncertainty**) where it is critical to link intervention timing to changes in the epidemic.
 
 ## Predicted hospitalizations
 
