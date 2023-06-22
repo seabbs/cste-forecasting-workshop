@@ -1,6 +1,4 @@
-*.Rmd
-!epinow2.Rmd
 .Rproj.user
-epinow2_cache/
-epinow2_files/
-epinow2.html
+tutorial_cache/
+tutorial_files/
+tutorial.html
