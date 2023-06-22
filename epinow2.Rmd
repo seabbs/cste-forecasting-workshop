@@ -1,6 +1,6 @@
 ---
 title: Estimating reporting delays and nowcasting/forecasting infections with EpiNow2 using HHS COVID-19 hospitalizations
-author: "Sam Abbott, Zachary Susswein, and Kaitlyn Gostic"
+author: "Sam Abbott, Zachary Susswein, and Katelyn Gostic"
 output:
   bookdown::html_document2:
     theme: cosmo
@@ -99,18 +99,21 @@ Here, we focus on the data from New York, Utah, Ohio, Virginia, and North Caroli
 We _could_ download the most recent version of this data directly using:
 
 ```{r, eval = FALSE, class.source = "fold-hide"}
+# use the covidcast_signal function from the covidcast package to read in data
 covid_hospitalizations <- covidcast_signal(
-      data_source = "hhs",
+      data_source = "hhs", 
       signal = "confirmed_admissions_covid_1d",
       start_day = "2021-12-01",
       end_day = "2022-02-01",
       geo_type = "state",
       geo_value = states_of_interest
     ) |>
-      as_tibble() |>
-      filter(issue == max(issue)) |>
-      select(geo_value, time_value, value) |>
-      rename(state = geo_value, date = time_value, confirm = value)
+      as_tibble() |> # format as a tibble
+      filter(issue == max(issue)) |> # keep only the most recent version
+      select(geo_value, time_value, value) |> # select these columns
+      rename(state = geo_value, # rename the columns for readability
+             date = time_value, 
+             confirm = value)
 ```
 
 The above command pulls the most up-to-date version of the data and stores it in a data frame called `covid_hospitalizations`.
@@ -533,7 +536,7 @@ We can now plot this convolved distribution.
 plot(inf_to_hospitalization)
 ```
 
-# Putting it all together into a nowcast
+# Putting it all together to nowcast and estimate $R_t$
 
 Now we have all the components we need to construct a nowcast. First we construct the data set of hospitalizations we wish to nowcast using data as available on the 14th of January 2022.
 
