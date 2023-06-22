@@ -714,6 +714,16 @@ We see that the forecast performs relatively well when compared to more recent d
 - The estimates may be affected by changes in hospitalization measures that lead to retrospective changes in the data. 
 - The approach requires data on hospitalizations, but does not adjust for infection to hospitalization ratio, meaning that the results should be interpreted as estimates of hospitalizations rather than infections.
 
+# Getting more from this tutorial
+
+Here are some ideas for how you can get more from this tutorial:
+
+- Vary the states being visualised, the state being used for modelling, or the time period (**All of these options require you to download new data).
+- Explore the various different options available in `estimate_infections()` for specifying the model structure, priors, and MCMC sampler options (see `?estimate_infections` for more details).
+- Try varying or removing the delay adjustment in `estimate_infections()` (see `?estimate_infections` and the [Delays from infection to hospitalization](#delays-from-infection-to-hospitalization) section in this tutorial for more details). What happens to the estimates?
+- Similarly, try updating the generation time distribution (see `?estimate_infections`. What happens to the estimates?
+- Try exploring the synthetic data example for `estimate_truncation()`. How does altering the synthetic parameters impact the simulated degree of right truncation? How does the model perform when the degree of right truncation is varied?
+
 # Other resources
 
 If you are interested in finding additional resources for estimating the effective reproduction number or learning about nowcasting in R, explore the following:
