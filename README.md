@@ -58,7 +58,7 @@ If you are interested in finding additional resources for estimating the effecti
 - [Documentation](https://epiforecasts.io/EpiNow2/dev): The documentation for the `EpiNow2` package. This is the package we will be using in this tutorial. It is designed to be easy to use, robust to a wide range of contexts, and flexible.
 - [CDC Mpox Technical reports](https://www.cdc.gov/poxvirus/mpox/cases-data/technical-report.html): For a recent example of `EpiNow2` in use, see the CDC's technical reports on Mpox. These reports use `EpiNow2` to estimate the effective reproduction number and forecast future cases.
 - [Reflections on two years estimating the effective reproduction number](https://epiforecasts.io/posts/2022-03-25-rt-reflections/index.html): This blog post reflects on the development of `EpiNow2` and the challenges of estimating the effective reproduction number in real-time at scale.
-- [Nowcasting example](https://github.com/epiforecasts/nowcasting.example): This is a repository that uses simulated data to demonstrate how to nowcast using both `EpiNow2` and `Epinowcast`.
+- [Nowcasting example](https://github.com/epiforecasts/nowcasting.example): This is a repository that uses simulated data to demonstrate how to nowcast using both `EpiNow2` and `epinowcast`.
 - [Description of the first global outbreak of mpox: an analysis of global surveillance data](https://doi.org/10.1016/S2214-109X(23)00198-5): A global description of the 2022–23 multi-country mpox outbreak. This paper uses `EpiNow2` to estimate the effective reproduction number with adjustments for known delays and right truncation.
 - [Tutorial Q and A](https://github.com/seabbs/cste-forecasting-workshop/discussions/categories/q-a): If you have any questions about the tutorial, please post them here. We will try to answer them as quickly as possible.
 
@@ -66,7 +66,7 @@ If you are interested in finding additional resources for estimating the effecti
 
 - [epinowcast](https://package.epinowcast.org): This package has been designed as the successor to `EpiNow2` and is currently under development. It is designed to be more general and even more flexible than `EpiNow2`.
 - [epidemia](https://imperialcollegelondon.github.io/epidemia/index.html): This is another flexible package for estimating the effective reproduction number and forecasting. It is designed to be more flexible than `EpiNow2` and `epinowcast` but is potentially more difficult to use. It also generally has less functionality for dealing with delays than `EpiNow2` and `epinowcast`.
-- [EpiEstim](https://cran.r-project.org/web/packages/EpiEstim/index.html): This is a more mature package for estimating the effective reproduction number. It exploits a mathematically relationship to fit the renewal equation very quickly but is not currently able to handle reporting delays or to produce forecasts which the use of supporting packages.
+- [EpiEstim](https://cran.r-project.org/web/packages/EpiEstim/index.html): This is a more mature package for estimating the effective reproduction number. It exploits a mathematically relationship to fit the renewal equation very quickly but is not currently able to handle reporting delays or to produce forecasts without the use of supporting packages.
 
 **Papers**
 
