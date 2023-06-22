@@ -20,7 +20,7 @@ The set up process comes in three parts:
 document is sitting in your computer in a folder called `cste-forecasting-workshop`,
 then you've successfully completed this step. If not, look for a file with a *.zip
 extension in an email. Download and unzip the folder.
-  - If you're comfortable with Git and Github, you can clone the repository
+    - If you're comfortable with Git and Github, you can clone the repository
   from `seabbs/cste-forecasting-workshop`
 
 2. Download and install R and Rstudio [from this website](https://posit.co/download/rstudio-desktop/)
