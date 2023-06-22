@@ -322,6 +322,10 @@ covid_hospitalizations_reporting_cdf |>
   facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
 
+# Choosing a state and target date to nowcast
+
+## Define the state to nowcast
+
 For the rest of this tutorial we focus on Ohio. You can repeat the analysis for other states by changing the following variable to the abbreviated state name you are interested in (e.g. "ca" for California).
 
 ```{r}
@@ -337,16 +341,22 @@ if (!(nowcast_state %in% states_of_interest)) {
 }
 ```
 
-# Estimating the reporting delay
+## Define the target date to nowcast for
 
-
-## Define a target date of interest
-
-We first define a target date of interest. Here we use the 14th of January 2022, but you can change this to any date between the 31st of December 2021 and the 14th of January 2022 (or other dates if you have updated the `time_period` variable and the data snapshot).
+We also define a target date of interest. Here we use the 14th of January 2022, but you can change this to any date between the 31st of December 2021 and the 14th of January 2022 (or other dates if you have updated the `time_period` variable and the data snapshot).
 
 ```{r}
 target_date <- as.Date("2022-01-14")
 ```
+
+```{r, class.source = "fold-hide"}
+dates <- unique(covid_hospitalizations$date)
+if (!any(dates %in% target_date)) {
+  stop("target_date must be one of the dates in time_period")
+}
+```
+
+# Estimating the reporting delay
 
 ## Using recorded data vintages for Ohio
 
