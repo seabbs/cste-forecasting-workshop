@@ -47,7 +47,7 @@ run the code in `tutorial.Rmd` as part of the workshop.
 
 Another option is to use [codespaces](https://code.visualstudio.com/docs/remote/codespaces) for which we provide a prebuilt environment (for vscode users this is also available for local use).
 
-As a back up, we also have a [binder](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio) set up with all the necessary packages installed. This will take a little while to load and is a little unstable but should allow you to run the code in `tutorial.Rmd` as part of the workshop. Note that this will not save any changes you make to the code and may be slower than running the code on your own machine. If you run into an SSL error you may need to change the link to `http` in the URL bar and allow change your browser settings to allow unsafe sites.
+As a back up, we also have a [binder](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio) set up with all the necessary packages installed. This will take a little while to load and is a little unstable but should allow you to run the code in `tutorial.Rmd` as part of the workshop. Note that this will not save any changes you make to the code and may be slower than running the code on your own machine. If you run into an SSL error you could try editing the address in your URL bar to `http` (from https) and change your browser security settings for this site. Note: do this at your own risk, and never on a state or federal government computer.
 
 # Other resources
 
