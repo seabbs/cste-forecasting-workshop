@@ -48,6 +48,7 @@ If you are interested in finding additional resources for estimating the effecti
 - [CDC Mpox Technical reports](https://www.cdc.gov/poxvirus/mpox/cases-data/technical-report.html): For a recent example of `EpiNow2` in use, see the CDC's technical reports on Mpox. These reports use `EpiNow2` to estimate the effective reproduction number and forecast future cases.
 - [Reflections on two years estimating the effective reproduction number](https://epiforecasts.io/posts/2022-03-25-rt-reflections/index.html): This blog post reflects on the development of `EpiNow2` and the challenges of estimating the effective reproduction number in real-time at scale.
 - [Nowcasting example](https://github.com/epiforecasts/nowcasting.example): This is a repository that uses simulated data to demonstrate how to nowcast using both `EpiNow2` and `Epinowcast`.
+- [Description of the first global outbreak of mpox: an analysis of global surveillance data](https://doi.org/10.1016/S2214-109X(23)00198-5): A global description of the 2022–23 multi-country mpox outbreak. This paper uses `EpiNow2` to estimate the effective reproduction number with adjustments for known delays and right truncation.
 - [Tutorial Q and A](https://github.com/seabbs/cste-forecasting-workshop/discussions/categories/q-a): If you have any questions about the tutorial, please post them here. We will try to answer them as quickly as possible.
 
 **Other packages**
