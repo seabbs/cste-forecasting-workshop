@@ -7,8 +7,6 @@ RUN apt-get update && \
     libxml2-dev \
     libudunits2-dev
 
-USER rstudio 
-
 COPY renv renv
 COPY renv.lock renv.lock
 
