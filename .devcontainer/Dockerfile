@@ -7,7 +7,11 @@ RUN apt-get update && \
     libxml2-dev \
     libudunits2-dev
 
+USER vscode
+
 COPY renv renv
 COPY renv.lock renv.lock
 
 RUN Rscript -e 'renv::restore()'
+
+USER root
