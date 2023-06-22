@@ -11,7 +11,7 @@ name: render-tutorial
 
 jobs:
   render-tutorial:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
