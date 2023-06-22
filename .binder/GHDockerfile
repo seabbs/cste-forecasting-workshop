@@ -9,7 +9,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     libssl-dev \
     libcurl4-openssl-dev \
-    libxml2-dev
+    libxml2-dev \
+    libudunits2-dev
 
 # Switch back to jovyan to install R packages
 USER ${NB_USER}

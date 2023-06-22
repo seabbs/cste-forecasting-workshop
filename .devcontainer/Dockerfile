@@ -4,7 +4,8 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     libssl-dev \
     libcurl4-openssl-dev \
-    libxml2-dev
+    libxml2-dev \
+    libudunits2-dev
 
 COPY renv renv
 COPY renv.lock renv.lock
