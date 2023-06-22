@@ -367,7 +367,7 @@ Later on we will generate a nowcast for the 14th of January 2022, so we only wan
 Unfortunately, this model cannot account for over-reporting and so we will first have to remove it from the data.
 
 ```{r estimate_delays}
-truncation_est <- covid_hospitalizations_reporting_cdf |>
+est_df <- covid_hospitalizations_reporting_cdf |>
   filter(state == nowcast_state) |>
   filter(date >= as.Date(time_period[1]) + 13) |>
   filter(report_date >= target_date - 14) |>
@@ -377,7 +377,9 @@ truncation_est <- covid_hospitalizations_reporting_cdf |>
   ungroup() |>
   # Over the new year reporting was unusually delayed.
   # This leads to problems for the model
-  filter(report_date != as.Date("2022-01-05")) |>
+  filter(report_date != as.Date("2022-01-05"))
+
+truncation_est <- est_df |>
   select(report_date, date, confirm) |>
   group_split(report_date) |>
   map(~select(., -report_date)) |>
@@ -396,11 +398,30 @@ truncation_dist <- do.call(
 
 > &#9888; **This model may throw warnings about divergent transitions.** This is because the model is trying to estimate the truncation distribution for the data but there is very little truncation in the data. This is good news as it means we can use the data as observed to estimate the reproduction number. However, it does mean that `estimate_truncation()` won't work well (hence the warnings you may see when running the code) as it is designed to estimate the truncation distribution for data where truncation is present.
 
-```{r plot-truncation}
-plot(truncation_dist)
+A good way to check if the data might be unsuitable for `estimate_truncation()` is to look at the distribution of reporting delays. As a first pass we can simply look at the proportion of data that is finally reported is reported on the first available report date. If this is high then there is very little truncation in the data and `estimate_truncation()` will not work well. We also check the mean and standard deviation of the reporting delay to make sure that we are not actually seeing very extreme truncation (i.e., days with zero reported cases).
+
+```{r}
+est_df |>
+    filter(date >= target_date - 14) |>
+    mutate(cdf = ifelse(cdf > 1, 1, cdf)) |>
+    group_by(date) |>
+    filter(report_date == min(report_date)) |>
+    ungroup() |>
+    summarise(
+      `Mean proportion reported by the first report` = 
+        paste0(round(mean(cdf) * 100, 1), "%"),
+      `Standard deviation of the proportion reported by the first report` =
+        paste0(round(sd(cdf) * 100, 1), "%)"),
+      `Mean delay` = paste0(round(mean(delay), 1), " days"),
+      `Standard deviation of the delay` = paste0(round(sd(delay), 1), " days")
+    ) |>
+    pivot_longer(
+      everything(), names_to = "Summary statistic", values_to = "Value"
+    ) |>
+    kable()
 ```
 
-> &#9888; **This plot is empty because there is very little truncation in this data for this time period.** 
+As we expected we see a very high proportion of the data is reported on the first available report date. This means that there is likely very little truncation in the data and so `estimate_truncation()` will not work well as there is so little truncation for it to model. We also see that the mean of the reporting delay is around 2 with a low standard deviation. This is as expected as the HHS has a fixed two day reporting delay for all states.
 
 ## Using synthetic vintages based on the latest data for Ohio
 
