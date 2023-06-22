@@ -385,7 +385,7 @@ est_df <- covid_hospitalizations_reporting_cdf |>
   filter(report_date != as.Date("2022-01-05"))
 ```
 
-> &#128161; The anomalous reporting delay around the new year is a good example of one of the limtitations of nowcasting we discussed in the slide on **Limitations** because the new year was also a critical period for the spread of Omicron. Current methods for nowcasting struggle to account for this kind of anomalously meaning that the nowcast may be biased when it is most needed.
+> &#128161; The anomalous reporting delay around the new year is a good example of one of the limtitations of nowcasting we discussed in the slide on **Limitations** because the new year was also a critical period for the spread of Omicron. Current methods for nowcasting struggle to account for this kind of anomaly meaning that the nowcast may be biased when it is most needed.
 
 ```{r estimate_delays} 
 truncation_est <- est_df |>
@@ -452,8 +452,6 @@ Which we can then plot to see what it looks like,
 plot(synth_truncation)
 ```
 
-Problem: Day of week effects
-
 Now we use this to generate a synthetic data set by combining it with the latest data from Ohio (as of the 14th of January 2022).
 
 ```{r define-simulator-for-truncation, class.source = "fold-hide"}
@@ -518,7 +516,7 @@ Plotting the model predictions compared to synthetic data we can see that the mo
 plot(syn_trunc_est)
 ```
 
-> &#128161; The black dots in this plot represent the data observed in real-time, whilst the bars are the latest available data. This effect is referred to as right truncation. Another example of this was shown in the slides (**Inputs needed for nowcasting**). Having the information on previous reporting patterns allows us to fit a predictive model, instead of making assumptions about the reporting delay distribution which is what we have to do when we don't have this information.
+> &#128161; The black dots in this plot represent the data observed in real-time, whilst the bars are the latest available data. You should see that the data available at the time underestimated what was eventually reported and that this gets worse closer to date of the most recent data. This effect is referred to as right truncation. Another example of this was shown in the slides (**Inputs needed for nowcasting**). Having the information on previous reporting patterns allows us to fit a predictive model to this truncation, instead of making assumptions about the reporting delay distribution which is what we have to do when we don't have this information. Sometimes assumptions can be wrong which may bias results..
 
 Finally we can extract and plot the estimated reporting distribution,
 
@@ -655,7 +653,7 @@ We then use the `estimate_infections()` function contained in `EpiNow2` on this 
 This model uses a renewal equation based method to estimate the reproduction number and then convolves this with the incubation period and reporting delay we defined earlier to obtain a nowcast.
 It generates a forecast extrapolating the reproduction number estimate into the future. This is just an example model as there are many other ways to estimate the reproduction number and many other ways to extrapolate it into the future. We recommend thinking carefully about which model to use for your analysis.
 
-> &#128161; We haven't adjusted for truncation as there was little evidence of truncation in the weeks directly before this date.
+> &#128161; We haven't adjusted for truncation as there was little evidence of it in the weeks directly before this date.
  
 ```{r estimate_infections}
 rt_estimates <- estimate_infections(
@@ -770,7 +768,7 @@ We see that the forecast performs relatively well when compared to more recent d
 
 Here are some ideas for how you can get more from this tutorial:
 
-- Vary the states being visualised, the state being used for modelling, or the time period (**All of these options require you to download new data).
+- Vary the states being visualised, the state being used for modelling, or the time period (**All of these options require you to download new data**).
 - Explore the various different options available in `estimate_infections()` for specifying the model structure, priors, and MCMC sampler options (see `?estimate_infections` for more details).
 - Try varying or removing the delay adjustment in `estimate_infections()` (see `?estimate_infections` and the [Delays from infection to hospitalization](#delays-from-infection-to-hospitalization) section in this tutorial for more details). What happens to the estimates?
 - Similarly, try updating the generation time distribution (see `?estimate_infections`. What happens to the estimates?
