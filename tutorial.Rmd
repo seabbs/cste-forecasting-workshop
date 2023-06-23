@@ -46,7 +46,7 @@ This tutorial is written in [R Markdown](https://rmarkdown.rstudio.com/) and can
 
 We also provide a [standalone HTML version](https://samabbott.co.uk/cste-forecasting-workshop/tutorial.html) of this tutorial that can be viewed in any web browser. This version is static and cannot be run interactively.
 
-You may find it useful to refer back to the slides from the workshop as you work through the tutorial.
+You may find it useful to refer back to the [slides](https://samabbott.co.uk/cste-forecasting-workshop/slides.pdf) from the workshop as you work through the tutorial.
 
 ## Load required libraries
 
@@ -516,7 +516,7 @@ Plotting the model predictions compared to synthetic data we can see that the mo
 plot(syn_trunc_est)
 ```
 
-> &#128161; The black dots in this plot represent the data observed in real-time, whilst the bars are the latest available data. You should see that the data available at the time underestimated what was eventually reported and that this gets worse closer to date of the most recent data. This effect is referred to as right truncation. Another example of this was shown in the slides (**Inputs needed for nowcasting**). Having the information on previous reporting patterns allows us to fit a predictive model to this truncation, instead of making assumptions about the reporting delay distribution which is what we have to do when we don't have this information. Sometimes assumptions can be wrong which may bias results..
+> &#128161; The black dots in this plot represent the data observed in real-time, whilst the bars are the latest available data. You should see that the data available at the time underestimated what was eventually reported and that this gets worse closer to date of the most recent data. This effect is referred to as right truncation. Another example of this was shown in the [slides](https://samabbott.co.uk/cste-forecasting-workshop/slides.pdf) (**Inputs needed for nowcasting**). Having the information on previous reporting patterns allows us to fit a predictive model to this truncation, instead of making assumptions about the reporting delay distribution which is what we have to do when we don't have this information. Sometimes assumptions can be wrong which may bias results..
 
 Finally we can extract and plot the estimated reporting distribution,
 
@@ -726,7 +726,7 @@ This is useful as it allows us to get a sense for the number of infections after
 plot(rt_estimates, type = "infections")
 ```
 
-> &#128161; As this plot is by date of infection we can use it to get a better sense of how the epidemic has changed over time. This could be useful if we were looking at the role of interventions as discussed in the slides (**Estimates must be accurate, timely, and account for uncertainty**) where it is critical to link intervention timing to changes in the epidemic.
+> &#128161; As this plot is by date of infection we can use it to get a better sense of how the epidemic has changed over time. This could be useful if we were looking at the role of interventions as discussed in the [slides](https://samabbott.co.uk/cste-forecasting-workshop/slides.pdf) (**Estimates must be accurate, timely, and account for uncertainty**) where it is critical to link intervention timing to changes in the epidemic.
 
 ## Predicted hospitalizations
 
@@ -745,7 +745,7 @@ rt_estimates |>
 
 We see that the forecast performs relatively well when compared to more recent data.
 
-> &#128161; You should be able to see that the model can capture the day-of-the-week periodicity in the data that we discussed in the slides (**Problem: Day of week effects**). This is important as it makes us less likely to overestimate the reproduction number on weekends and underestimate it on weekdays, for example.
+> &#128161; You should be able to see that the model can capture the day-of-the-week periodicity in the data that we discussed in the [slides](https://samabbott.co.uk/cste-forecasting-workshop/slides.pdf) (**Problem: Day of week effects**). This is important as it makes us less likely to overestimate the reproduction number on weekends and underestimate it on weekdays, for example.
 
 # Summary
 
