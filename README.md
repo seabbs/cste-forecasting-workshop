@@ -26,6 +26,8 @@ If you have R and RStudio installed on your computer, feel free to skip ahead
 
 # Getting set up
 
+## Local set up
+
 The set up process comes in three parts:
 
 1. Downloading the folder with the necessary code onto your machine. If this
@@ -45,6 +47,12 @@ download all the necessary packages.
 
 These steps should take around 20 minutes. Once completed, you're all set up to
 run the code in `tutorial.Rmd` as part of the workshop.
+
+## Using the cloud
+
+We recommend that you run the code on your own machine. However, if you are unable to do this, there are a few other options.
+
+One option is to use [Posit cloud](https://posit.co). This is a cloud based RStudio environment that is free for small amounts of use. You can use the following link to open the tutorial in a Posit cloud environment: [https://posit.cloud/content/6132220](https://posit.cloud/content/6132220).
 
 Another option is to use [codespaces](https://code.visualstudio.com/docs/remote/codespaces) for which we provide a prebuilt environment (for vscode users this is also available for local use).
 
