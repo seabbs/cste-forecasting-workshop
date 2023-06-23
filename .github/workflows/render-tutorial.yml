@@ -45,7 +45,7 @@ jobs:
       - name: Move files to new folder
         run: |
           mkdir rendered_docs
-          mv index.html tutorial.html rendered_docs/
+          mv index.html tutorial.html slides.pdf rendered_docs/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
