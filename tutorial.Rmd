@@ -546,7 +546,6 @@ where $T$ is the maximum length of the generation time and $g(\tau)$ is the prob
 
 > &#128161; See the **Estimating Rt from a time series of counts** slide from the talk for a more visual discussion of the role of the generation time in the renewal equation.
 
-
 Rather than estimating the generation time here, we instead use an estimate from the literature. 
 Specifically we use an estimate from [Ganyani et al. (2020)](https://doi.org/10.2807%2F1560-7917.ES.2020.25.17.2000257) which is based on a few hundred cases of COVID-19 in China.
 For a real-world analysis we recommend thinking carefully about which generation time distribution to use. 
