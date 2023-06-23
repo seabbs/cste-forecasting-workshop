@@ -1,5 +1,7 @@
 # Welcome!
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio)
+
 This tutorial is meant to be an approachable introduction to estimating $R_t$.
 It's meant for any and all levels of comfort with writing code.
 
@@ -52,9 +54,7 @@ We recommend that you run the code on your own machine. However, if you are unab
 
 One option is to use [codespaces](https://code.visualstudio.com/docs/remote/codespaces) for which we provide a prebuilt environment (for vscode users this is also available for local use).
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio)
-
-Another option is to use [binder](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio) which we have set up with all the necessary packages installed. This will take a little while to load and is a little unstable but should allow you to run the code in `tutorial.Rmd` as part of the workshop. Note that this will not save any changes you make to the code and may be slower than running the code on your own machine. If you run into an SSL error you could try editing the address in your URL bar to `http` (from https) and change your browser security settings for this site. Note: do this at your own risk, and never on a state or federal government computer.
+Another option is to use [binder](https://mybinder.org/v2/gh/seabbs/cste-forecasting-workshop/main?urlpath=rstudio) which we haveset up with all the necessary packages installed. This will take a little while to load and is a little unstable but should allow you to run the code in `tutorial.Rmd` as part of the workshop. Note that this will not save any changes you make to the code and may be slower than running the code on your own machine. If you run into an SSL error you could try editing the address in your URL bar to `http` (from https) and change your browser security settings for this site. Note: do this at your own risk, and never on a state or federal government computer.
 
 # Other resources
 
