@@ -19,7 +19,7 @@ If you have R and RStudio installed on your computer, feel free to skip ahead
   explanations for the tutorial.
 - [**tutorial.html**](https://samabbott.co.uk/cste-forecasting-workshop/tutorial.html): This is the
  tutorial in html format. It is best viewed in a browser. For most users this is **the best place to start**.
-- [slides.pdf](https://samabbott.co.uk/cste-forecasting-workshop/slides.pdf): These are the slides from the workshop. They can be used alongside the tutorial to provide a little more context.
+- [**slides.pdf**](https://samabbott.co.uk/cste-forecasting-workshop/slides.pdf): These are the slides from the workshop. They can be used alongside the tutorial to provide a little more context.
 - **All the rest**: These are the files that are necessary to run the tutorial. You
   don't need to worry about them unless you want to explore the code in more
   detail.
