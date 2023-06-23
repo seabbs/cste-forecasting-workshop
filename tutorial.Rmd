@@ -157,7 +157,7 @@ covid_hospitalizations_by_vintage <- as_of_dates |>
       data_source = "hhs",
       signal = "confirmed_admissions_covid_1d",
       start_day = time_period[1],
-      end_day = end_date,
+      end_day = end_period,
       as_of = x,
       geo_type = "state",
       geo_value = states_of_interest
