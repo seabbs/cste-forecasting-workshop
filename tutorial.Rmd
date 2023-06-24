@@ -246,7 +246,7 @@ covid_hospitalizations |>
 
 As expected we see a large increase in hospitalizations in all states during the winter 2021-2022 wave. However, we can also see that there is a large amount of variation in the number of hospitalizations reported on each date and state by state. 
 
-## Visualise hosptialisations by date of report
+## Visualize hospitalizations by date of report
 
 While it is interesting to look back retrospectively, it is important to remember that the data we have now is not the same as the data that was available at the time. This can occur for a number of reasons; for example, there may be a delay between the date of hospitalization and the date of report or there may be changes in how hospitalizations are measured which leads to a retrospective change in the number of hospitalizations.
 
