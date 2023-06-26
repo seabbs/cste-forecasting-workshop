@@ -65,7 +65,7 @@ library("ggplot2") # for plotting data
 library("knitr") # for displaying data
 library("tidyr") # for manipulating data
 library("purrr") # for manipulating data
-library("covidcast") # for downlooading HHS hospitalization data
+library("covidcast") # for downloading HHS hospitalization data
 library("here") # for file paths
 ```
 
@@ -325,7 +325,7 @@ covid_hospitalizations_reporting_cdf |>
   facet_wrap(vars(state), ncol = 1, scales = "free_y")
 ```
 
-We see that the reporting delay is somewhat unstable with a large amount of under/over reporting on the first report date and then very little change after that. This suggests that the reporting delay is not a simple delay but rather a more complex process. One major factor is likely the, previously noted, data procesing practice of using the last value carried forward for the most recent date. This is the kind of assumption that needs to be carefully communicated to those using the data as it can lead to misinterpretation of the data as well as impacting nowcasts based on the data.
+We see that the reporting delay is somewhat unstable with a large amount of under/over reporting on the first report date and then very little change after that. This suggests that the reporting delay is not a simple delay but rather a more complex process. One major factor is likely the, previously noted, data processing practice of using the last value carried forward for the most recent date. This is the kind of assumption that needs to be carefully communicated to those using the data as it can lead to misinterpretation of the data as well as impacting nowcasts based on the data.
 
 # Choosing a state and target date to nowcast
 
@@ -340,7 +340,7 @@ nowcast_state <- "oh"
 > &#9888; **Note:** `nowcast_state` must be one of the states in `states of interest` above.
 
 ```{r, class.source = "fold-hide"}
-# Check the data comtains the state of interest
+# Check the data contains the state of interest
 if (!(nowcast_state %in% states_of_interest)) {
   stop("nowcast_state must be one of the states in states_of_interest")
 }
@@ -385,7 +385,7 @@ est_df <- covid_hospitalizations_reporting_cdf |>
   filter(report_date != as.Date("2022-01-05"))
 ```
 
-> &#128161; The anomalous reporting delay around the new year is a good example of one of the limtitations of nowcasting we discussed in the slide on **Limitations** because the new year was also a critical period for the spread of Omicron. Current methods for nowcasting struggle to account for this kind of anomaly meaning that the nowcast may be biased when it is most needed.
+> &#128161; The anomalous reporting delay around the new year is a good example of one of the limitations of nowcasting we discussed in the slide on **Limitations** because the new year was also a critical period for the spread of Omicron. Current methods for nowcasting struggle to account for this kind of anomaly meaning that the nowcast may be biased when it is most needed.
 
 ```{r estimate_delays} 
 truncation_est <- est_df |>
@@ -755,7 +755,7 @@ We see that the forecast performs relatively well when compared to more recent d
 ## Strengths
 
 - The approach provides estimates for reproduction numbers, growth rates, and forecasts future hospitalizations using available data and accounting for real-world data issues.
-- The tutorial provides detailed guidance on how to estimate reporting delays which can be diffucult using traditional methods due to right truncation.
+- The tutorial provides detailed guidance on how to estimate reporting delays which can be difficult using traditional methods due to right truncation.
 - `EpiNow2` uses a renewal equation based method to estimate the reproduction number and convolves this with the incubation period and reporting delay to obtain a nowcast and forecast future hospitalizations. This approach has been widely used in the literature and is relatively easy to understand.
 
 ## Limitations 
@@ -770,7 +770,7 @@ Here are some ideas for how you can get more from this tutorial:
 - Vary the states being visualised, the state being used for modelling, or the time period (**All of these options require you to download new data**).
 - Explore the various different options available in `estimate_infections()` for specifying the model structure, priors, and MCMC sampler options (see `?estimate_infections` for more details).
 - Try varying or removing the delay adjustment in `estimate_infections()` (see `?estimate_infections` and the [Delays from infection to hospitalization](#delays-from-infection-to-hospitalization) section in this tutorial for more details). What happens to the estimates?
-- Similarly, try updating the generation time distribution (see `?estimate_infections`. What happens to the estimates?
+- Similarly, try updating the generation time distribution (see `?estimate_infections`). What happens to the estimates?
 - Try exploring the synthetic data example for `estimate_truncation()`. How does altering the synthetic parameters impact the simulated degree of right truncation? How does the model perform when the degree of right truncation is varied?
 
 # Other resources
