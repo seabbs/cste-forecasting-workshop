@@ -69,8 +69,6 @@ library("covidcast") # for downloading HHS hospitalization data
 library("here") # for file paths
 ```
 
-> &#128161; This tutorial depends on the development version of `EpiNow2`. You can see the documentation for the development version [here](https://epiforecasts.io/EpiNow2/dev/).
-
 ## Setting the number of cores
 
 `EpiNow2` can use multiple cores to speed up the analysis - up to the number of MCMC chains used for model fitting (which here is 4). Here we set the number of cores to use to the number of cores available on your machine or 4 whichever is fewer.
@@ -393,16 +391,15 @@ truncation_est <- est_df |>
   group_split(report_date) |>
   map(~select(., -report_date)) |>
   estimate_truncation(
-    trunc_max = 7,
+    truncation = dist_spec(mean = 0, sd = 0, mean_sd = 1, sd_sd = 1, max = 10),
     chains = 4, iter = 2000,
     control = list(adapt_delta = 0.99, max_treedepth = 15),
     verbose = interactive()
   )
 
-## Make the output a dist_spec object
-truncation_dist <- do.call(
-  dist_spec, c(truncation_est$dist)
-)
+# Assign the truncation delay
+truncation_dist <- truncation_est$dist
+truncation_dist
 ```
 
 > &#9888; **This model may throw warnings about divergent transitions.** This is because the model is trying to estimate the truncation distribution for the data but there is very little truncation in the data. This is good news as it means we can use the data as observed to estimate the reproduction number. However, it does mean that `estimate_truncation()` won't work well (hence the warnings you may see when running the code) as it is designed to estimate the truncation distribution for data where truncation is present.
@@ -503,7 +500,7 @@ We can now use `estimate_truncation()` to estimate the distribution of reporting
 ```{r estimate-synthetic-delays}
 syn_trunc_est <- estimate_truncation(
   synth_truncated_hosp,
-  trunc_max = 15,
+  truncation = dist_spec(mean = 0, sd = 0, mean_sd = 1, sd_sd = 1, max = 15),
   chains = 4, iter = 2000,
   control = list(adapt_delta = 0.99, max_treedepth = 15),
   verbose = interactive()
@@ -521,9 +518,7 @@ plot(syn_trunc_est)
 Finally we can extract and plot the estimated reporting distribution,
 
 ```{r estimated-synth-delay}
-est_synth_trunc_dist <- do.call(
-  dist_spec, syn_trunc_est$dist
-)
+est_synth_trunc_dist <- syn_trunc_est$dist
 
 est_synth_trunc_dist
 
