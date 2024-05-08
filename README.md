@@ -77,6 +77,6 @@ If you are interested in finding additional resources for estimating the effecti
 
 **Papers**
 
-- [Practical considerations for measuring the effective reproductive number, Rt](10.1371/journal.pcbi.1008409): This paper provides an overview of the renewal equation approach to estimating the effective reproduction number and discusses some of the practical considerations that need to be taken into account when using this approach.
+- [Practical considerations for measuring the effective reproductive number, Rt](https://doi.org/10.1371/journal.pcbi.1008409): This paper provides an overview of the renewal equation approach to estimating the effective reproduction number and discusses some of the practical considerations that need to be taken into account when using this approach.
 - [Why are different estimates of the effective reproductive number so different? A case study on COVID-19 in Germany](https://doi.org/10.1101/2023.04.27.23289109): This paper explores the differences between different approaches to estimating the effective reproduction number and discusses the implications of these differences.
 - [Commentary on the use of the reproduction number R during the COVID-19 pandemic](https://doi.org/10.1177/09622802211037079): This paper provides a commentary on the use of the reproduction number during the COVID-19 pandemic and discusses some of the challenges of estimating the reproduction number in real-time.
